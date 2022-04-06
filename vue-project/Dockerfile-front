@@ -1,0 +1,8 @@
+FROM node:lts-alpine
+WORKDIR /vue-project
+ADD ./package.json ./
+RUN npm install
+
+COPY ./ /vue-project/
+RUN npm run build && rm -rf /var/lib/apt/lists/*
+CMD [ "npm", "run", "serve" ]
