@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  backend:
+    restart: always
+    build:
+      context: ./flask-project
+      dockerfile: Dockerfile-back
+    volumes:
+      - ./flask-project:/flask-project
+    ports:
+      - 8000:8000
+    depends_on:
+      - mongodb
+    stdin_open: true
+    tty: true
+  front:
+    build:
+     context: ./vue-project
+     dockerfile: Dockerfile-front
+    ports:
+      - 8080:8080
+    volumes:
+      - ./vue-project:/vue-project
+  mongodb:
+    image: mongo
+    restart: always
+    container_name: mongodb
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: kani
+      MONGO_INITDB_ROOT_PASSWORD: 123456
