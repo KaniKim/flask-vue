@@ -14,7 +14,18 @@
   </v-app-bar>
 
   <v-navigation-drawer v-model="drawer" temporary>
-    <v-list :items="items_drawer"></v-list>
+    <v-list>
+      <v-list-item
+        v-for="item in items_drawer"
+        :key="item.title"
+        :to="item.route"
+        link
+      >
+        <v-list-item-content>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </v-list>
   </v-navigation-drawer>
   <v-main>
     <v-content>
@@ -43,7 +54,6 @@
           <v-text-field
             type="password"
             v-model="password"
-            :rules="passwordRules"
             label="Password"
             required
           ></v-text-field>
@@ -99,16 +109,10 @@ export default {
     name: "",
     nameRules: [
       (v) => !!v || "Name is required",
-      (v) => (v && v.length <= 3) || "Name must be less than 10 characters",
+      (v) => (v && v.length <= 10) || "Name must be less than 10 characters",
     ],
     email: "",
     password: "",
-    passwordRules: [
-      (v) => !!v || "Password is required",
-      (v) =>
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#%&])(?=.{8,})/.text(v) ||
-        "Password must be valid",
-    ],
     emailRules: [
       (v) => !!v || "E-mail is required",
       (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
@@ -120,15 +124,11 @@ export default {
     items_drawer: [
       {
         title: "Login",
-        value: "foo",
+        route: "/login",
       },
       {
         title: "Register",
-        value: "bar",
-      },
-      {
-        title: "Category",
-        value: "fizz",
+        route: "/register",
       },
     ],
   }),
@@ -147,11 +147,13 @@ export default {
           password: this.password,
         })
         .then((res) => {
-          console.log(res.data);
+          if (res.status === 200) {
+            this.$router.replace("/");
+          }
+        })
+        .catch(() => {
+          alert("Email is already existed");
         });
-    },
-    reset() {
-      this.$refs.form.reset();
     },
   },
 };

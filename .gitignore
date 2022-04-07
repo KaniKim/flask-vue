@@ -153,6 +153,7 @@ pnpm-debug.log*
 *.sw?
 
 node_modules
-mongodb
+docker-entrypoint-initdb.d
 .pythonProject
+Config.py
 

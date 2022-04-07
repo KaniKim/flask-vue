@@ -13,6 +13,7 @@ ENV PATH="${PATH}:/root/.poetry/bin"
 
 COPY poetry.lock /flask-project/poetry.lock
 COPY pyproject.toml /flask-project/pyproject.toml
+COPY config.py /flask-project/Config.py
 COPY ./ /flask-project/
 
 RUN poetry install

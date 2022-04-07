@@ -12,6 +12,7 @@ Flask-Cors = "^3.0.10"
 black = "^22.3.0"
 flask-mongoengine = "^1.0.0"
 ipdb = "^0.13.9"
+Flask-JWT-Extended = "^4.3.1"
 
 [tool.poetry.dev-dependencies]
 

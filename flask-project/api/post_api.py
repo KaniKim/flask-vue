@@ -57,50 +57,60 @@ class PostAll(Resource):
 
         return [json.loads(user.to_json()) for user in PostMongo.objects()]
 
-    @Post.marshal_with(PostModel, code=201)
-    def post(self):
-        data = request.authorization
 
+@Category.route("/<string:category_name>")
+class CategorySpecific(Resource):
+    def get(self, category_name: str):
+        posts = CategoryMongo.objects.filter(name=category_name)[0].posts
+
+        posts_model = [PostMongo.objects.filter(id=post.id)[0] for post in posts]
+        return [
+            {
+                "title": post.title,
+                "author": json.loads(
+                    UserMongo.objects.filter(id=post.author.id)[0].to_json()
+                ),
+                "tags": [
+                    json.loads(TagMongo.objects.filter(id=tag.id)[0].to_json())
+                    for tag in post.tags
+                ],
+            }
+            for post in posts_model
+        ]
+
+
+@Category.route("")
+class CategoryAll(Resource):
+    def post(self):
+        data = request.get_json()
+
+        if "username" not in data and "password" not in data:
+            return make_response(jsonify("No User Data"), 404)
+
+        if (
+            UserMongo.objects.filter(email=data["username"])[0].password
+            != data["password"]
+        ):
+            return make_response(jsonify("Wrong Password or Username"), 404)
         import ipdb
 
         ipdb.set_trace()
 
-        if "username" not in data or "password" not in data:
-            return make_response(jsonify("No User Data"), 404)
-
-        if (
-            UserMongo.objects.filter(name=data["username"])[0].password
-            != data["password"]
-        ):
-            return make_response(jsonify("Wrong Password or Username"), 404)
-
         title = request.get_json()["title"]
-        author = UserMongo.objects.filter(name=data["username"])[0]
+        author = UserMongo.objects.filter(email=data["username"])[0]
         content = request.get_json()["content"]
         tags = [TagMongo(name=tag) for tag in request.get_json()["tags"]]
+        category = request.get_json()["category"]
         comments = []
 
         for tag in tags:
             tag.save()
 
-        PostMongo(
+        post = PostMongo(
             title=title, author=author, content=content, tags=tags, comments=comments
         ).save()
-
-        return {
-            "title": title,
-            "author": author,
-            "content": content,
-            "tags": tags,
-            "comments": [],
-        }
-
-
-@Category.route("")
-class CategoryAll(Resource):
-    @Category.marshal_with(CategoryModel, code=200)
-    def get(self):
-        pass
+        CategoryMongo(name=category, posts=[post]).save()
+        return make_response(jsonify({"msg": "Post is Written"}), 201)
 
 
 @Tag.route("/<string:post_id>")
