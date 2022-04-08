@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from flask import request, jsonify, make_response
 from flask_restx import Resource, Namespace
 from flask_restx.fields import String, Integer, Nested, List, Raw

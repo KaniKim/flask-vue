@@ -5,6 +5,7 @@ from flask_restx.fields import String, Boolean, Nested
 from bson.objectid import ObjectId
 import json
 
+from ..repository.user import UserRepository
 from ..model.user_model import User as UserMongo
 
 
@@ -29,29 +30,23 @@ UserModel = User.inherit(
 )
 UserAllModel = User.model("user_all", {"users": Nested(UserModel)})
 
+UserRepo = UserRepository()
+
 
 @User.route("")
 class UserAll(Resource):
     @User.marshal_with(UserModel, code=201)
     def post(self):
-        import ipdb
-
-        ipdb.set_trace()
 
         name = request.get_json()["name"]
         email = request.get_json()["email"]
         password = request.get_json()["password"]
+        user = UserRepo.find_user_by_email(email=email)
 
-        if len(UserMongo.objects.filter(email=email)) == 0:
+        if not user:
             return make_response(jsonify("User is already existed"), 400)
 
-        UserMongo(
-            name=name,
-            email=email,
-            password=password,
-            activated=True,
-        ).save()
-        return {"name": name, "email": email, "password": password}
+        return UserRepo.save_user(name=name, email=email, password=password)
 
 
 @User.route("/logout")
