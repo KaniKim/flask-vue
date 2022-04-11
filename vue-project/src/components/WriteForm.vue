@@ -101,6 +101,7 @@
 
 <script>
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export default {
   data: function () {
@@ -149,8 +150,10 @@ export default {
       this.chips.splice(index, 1);
     },
     writePost() {
+      const token = Cookies.get("access_token");
+      axios.defaults.headers.common["Authorization"] = token;
       axios
-        .post("http://localhost:8000/category", {
+        .post("http://localhost:8000/post", {
           title: this.title,
           content: this.content,
           tags: this.chips,
@@ -162,7 +165,6 @@ export default {
         })
         .catch((err) => {
           console.error(err);
-          alert("Email or Password is Wrong");
         });
     },
   },

@@ -1,16 +1,12 @@
 from flask import request, jsonify, make_response, session
 from flask_restful import Resource
 from flask_apispec import marshal_with, MethodResource
-from flask_jwt_extended import (
-    create_access_token,
-    create_refresh_token,
-    jwt_required,
-    get_jwt_identity,
-)
 
+import jwt
 import hashlib
 import datetime
 
+from ..config import Config
 from ..repository.user import UserRepository
 from ..domain.user import UserSchema
 
@@ -56,21 +52,13 @@ class UserAuth(MethodResource, Resource):
             return make_response(jsonify("Wrong Mail or Password"), 404)
         else:
 
-            access_token = create_access_token(identity=user[0]["email"])
-            refresh_token = create_refresh_token(identity=user[0]["email"])
-
+            access_token = jwt.encode(
+                {"username": user[0]["email"]}, Config.key, algorithm="HS256"
+            )
             return make_response(
                 jsonify(
                     username=user[0]["email"],
                     access_token=access_token,
-                    refresh_token=refresh_token,
                 ),
                 200,
             )
-
-    @jwt_required(refresh=True)
-    def get(self):
-        current_user = get_jwt_identity()
-        delta = datetime.timedelta(days=1)
-        access_token = create_access_token(identity=current_user, expires_delta=delta)
-        return make_response(jsonify(access_token=access_token), 200)

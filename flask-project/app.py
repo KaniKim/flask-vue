@@ -9,7 +9,7 @@ from flask_jwt_extended import JWTManager
 from .config import Config
 from .model import db
 from .api.user_api import User, UserAuth
-from .api.post_api import Post, Category
+from .api.post_api import Post
 
 
 app = Flask(__name__)
@@ -22,8 +22,9 @@ app.config["MONGODB_SETTINGS"] = {
     "password": "123456",
     "host": "mongodb://mongodb/test",
 }
-app.secret_key = "super secret key"
-app.config["SESSION_TYPE"] = "filesystem"
+app.config["JWT_TOKEN_LOCATION"] = ["headers"]
+app.config["JWT_FORM_KEY"] = "access_token"
+app.config["JWT_ALGORITHM"] = "HS512"
 app.config["JWT_SECRET_KEY"] = Config.key
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = Config.access
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = Config.refresh
@@ -36,7 +37,6 @@ api = Api(app)
 api.add_resource(UserAuth, "/auth", endpoint="auth")
 api.add_resource(User, "/user", endpoint="user")
 api.add_resource(Post, "/post", endpoint="post")
-api.add_resource(Category, "/category", endpoint="category")
 
 app.config["APISPEC_SPEC"] = APISpec(
     title="Awesome Project",
@@ -51,5 +51,4 @@ with app.app_context():
     docs.register(User, "user")
     docs.register(UserAuth, "auth")
     docs.register(Post, "post")
-    docs.register(Category, "category")
 db.init_app(app)

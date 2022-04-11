@@ -1,34 +1,33 @@
 from __future__ import annotations
-from marshmallow import Schema, fields
+from marshmallow import Schema
+from marshmallow.fields import Str, Int, List, Nested
 
 from .user import UserSchema
 
 
 class CommentSchema(Schema):
-    content = fields.String(required=False)
-    like = fields.Integer()
-    author = fields.Nested(UserSchema(only=("name",)))
-    next_comment = fields.List(
-        fields.Nested(lambda: CommentSchema(exclude="next_comment"), many=True)
-    )
+    content = Str(required=False)
+    like = Int()
+    author = Nested(UserSchema(only=("name",)))
+    next_comment = List(Nested("CommentSchema", many=True))
 
 
 class TagSchema(Schema):
-    name = fields.String(required=True)
+    name = Str(required=True)
 
 
 class PostSchema(Schema):
-    title = fields.String(required=True)
-    author = fields.Nested(UserSchema(only=("name",)))
-    content = fields.String(required=True)
-    tags = fields.List(fields.Nested(TagSchema()))
-    comments = fields.Nested(CommentSchema())
+    title = Str(required=True)
+    author = Nested(UserSchema(only=("name",)))
+    content = Str(required=True)
+    tags = List(Nested(TagSchema()))
+    comments = Nested(CommentSchema())
 
 
 class CategorySchema(Schema):
-    name = fields.String(required=True)
-    posts = fields.List(
-        fields.Nested(
+    name = Str(required=True)
+    posts = List(
+        Nested(
             PostSchema(
                 only=(
                     "title",

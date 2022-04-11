@@ -41,7 +41,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in items" :key="item.name" @click:row="handleClick">
+            <tr v-for="item in items" :key="item.name" @click:row="">
               <td>{{ item.title }}</td>
               <td>{{ item.author.name }}</td>
             </tr>
@@ -102,17 +102,11 @@ export default {
       },
     ],
   }),
-  methods: {
-    handleClick() {
-      console.log("good");
-      window.location.href = "http://locaclhost:8000/category/";
-    },
-  },
+
   created() {
     axios
-      .get("http://localhost:8000/category/work")
+      .get("http://localhost:8000/post")
       .then((res) => {
-        console.log(res.data);
         this.items = res.data;
       })
       .catch((err) => {

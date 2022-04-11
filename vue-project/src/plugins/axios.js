@@ -2,12 +2,11 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { refreshToken } from "@/plugins/login";
 
-axios.defaults.baseURL = "http://localhost:8000";
+const AxiosInst = axios.create();
 
-axios.interceptors.request.use(
+AxiosInst.interceptors.request.use(
   async function (config) {
-    config.headers.token = Cookies.get("token");
-    config.headers.refresh_token = Cookies.get("refresh_token");
+    config.headers.authorization = Cookies.get("access_token");
 
     return config;
   },
@@ -16,7 +15,7 @@ axios.interceptors.request.use(
   }
 );
 
-axios.interceptors.response.use(
+AxiosInst.interceptors.response.use(
   (res) => {
     return res;
   },
@@ -31,3 +30,5 @@ axios.interceptors.response.use(
     return Promise.reject(err);
   }
 );
+
+export default AxiosInst;
