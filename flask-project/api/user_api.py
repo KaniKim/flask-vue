@@ -1,116 +1,76 @@
 from flask import request, jsonify, make_response, session
-from flask_restx import Resource, Namespace
-from flask_restx.fields import String, Boolean, Nested
+from flask_restful import Resource
+from flask_apispec import marshal_with, MethodResource
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    jwt_required,
+    get_jwt_identity,
+)
 
-from bson.objectid import ObjectId
-import json
+import hashlib
+import datetime
 
 from ..repository.user import UserRepository
-from ..model.user_model import User as UserMongo
+from ..domain.user import UserSchema
 
-
-User = Namespace("User", description="CRUD for User API")
-
-UserPost = User.model(
-    "user_post",
-    {
-        "name": String,
-        "email": String,
-        "password": String,
-    },
-)
-
-UserModel = User.inherit(
-    "user",
-    UserPost,
-    {
-        "_id": String,
-        "activated": Boolean,
-    },
-)
-UserAllModel = User.model("user_all", {"users": Nested(UserModel)})
 
 UserRepo = UserRepository()
 
 
-@User.route("")
-class UserAll(Resource):
-    @User.marshal_with(UserModel, code=201)
+class User(MethodResource, Resource):
+    @marshal_with(UserSchema)
     def post(self):
-
         name = request.get_json()["name"]
         email = request.get_json()["email"]
         password = request.get_json()["password"]
+
+        pw_hash = hashlib.sha256(password.encode("utf-8")).hexdigest()
         user = UserRepo.find_user_by_email(email=email)
+        if user:
+            return make_response(jsonify({"msg": "User is already existed"}), 400)
 
-        if not user:
-            return make_response(jsonify("User is already existed"), 400)
-
-        return UserRepo.save_user(name=name, email=email, password=password)
-
-
-@User.route("/logout")
-class UserLogout(Resource):
-    def get(self):
-        session.pop("email", None)
-        return 200
+        return make_response(
+            jsonify(
+                UserRepo.save_user(name=name, email=email, password=pw_hash),
+                201,
+            )
+        )
 
 
-@User.route("/login")
-class UserLogin(Resource):
-    def get(self):
-        if "email" in session:
-            return 200
-        return 404
-
+class UserAuth(MethodResource, Resource):
+    @marshal_with(UserSchema)
     def post(self):
 
-        email = request.get_json()["email"]
-        password = request.get_json()["password"]
+        if not request:
+            return make_response(jsonify({"msg": "Missing Login Info"}), 400)
 
-        user = UserMongo.objects.filter(email=email)
+        email = request.form.to_dict()["userData[username]"]
+        pw_received = request.form.to_dict()["userData[password]"]
 
-        if len(user) == 0:
+        pw_hash = hashlib.sha256(pw_received.encode("utf-8")).hexdigest()
+
+        user = UserRepo.find_user_by_email_and_password(email=email, password=pw_hash)
+
+        if user is None:
             return make_response(jsonify("Wrong Mail or Password"), 404)
+        else:
 
-        if user[0].password == password:
-            session["email"] = email
+            access_token = create_access_token(identity=user[0]["email"])
+            refresh_token = create_refresh_token(identity=user[0]["email"])
+
             return make_response(
-                jsonify({"msg": "Login Acquired", "user": "kani@email.com"}), 200
+                jsonify(
+                    username=user[0]["email"],
+                    access_token=access_token,
+                    refresh_token=refresh_token,
+                ),
+                200,
             )
 
-        return make_response(jsonify("Wrong Mail or Password"), 404)
-
-
-@User.route("/<string:user_id>")
-class UserOne(Resource):
-    @User.marshal_with(UserModel, code=200)
-    def get(self, user_id: str):
-
-        return json.loads(UserMongo.objects.filter(id=ObjectId(user_id)).to_json())
-
-    @User.marshal_with(UserModel, code=201)
-    def put(self, user_id: str):
-        name = request.get_json()["name"]
-        email = request.get_json()["email"]
-        password = request.get_json()["password"]
-
-        user = UserMongo.objects.filter(id=ObjectId(user_id))[0]
-
-        user.name = name
-        user.email = email
-        user.password = password
-        user.save()
-
-        return json.loads(user.to_json())
-
-    def delete(self, user_id: str):
-        user = UserMongo.objects.filter(id=ObjectId(user_id))
-        user_valid = json.loads(user.to_json())
-
-        if len(user_valid) == 0:
-            return make_response(jsonify("No User to delete"), 404)
-
-        user.delete()
-
-        return make_response(jsonify("User is deleted"), 204)
+    @jwt_required(refresh=True)
+    def get(self):
+        current_user = get_jwt_identity()
+        delta = datetime.timedelta(days=1)
+        access_token = create_access_token(identity=current_user, expires_delta=delta)
+        return make_response(jsonify(access_token=access_token), 200)

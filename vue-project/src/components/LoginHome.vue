@@ -92,8 +92,6 @@
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
   data: () => ({
     drawer: false,
@@ -131,26 +129,13 @@ export default {
 
   methods: {
     login() {
-      axios
-        .post("http://localhost:8000/user/login", {
-          email: this.email,
-          password: this.password,
-        })
-        .then((res) => {
-          if (res.data.user) {
-            this.$store.commit("setUser", this.email);
-            this.$store.commit("setPassword", this.password);
-            this.$router.push({ name: "MyHome" });
-          }
-          if (res.data.msg) {
-            console.log(res);
-            alert(res.data.msg);
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-          alert("Email or Password is Wrong");
-        });
+      const UserData = {
+        username: this.email,
+        password: this.password,
+      };
+      this.$store.dispatch("LOGIN", UserData).then(() => {
+        this.$router.push("/my");
+      });
     },
   },
 };

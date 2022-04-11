@@ -7,13 +7,17 @@ authors = ["kani"]
 [tool.poetry.dependencies]
 python = "3.10.1"
 Flask = "^2.1.1"
-flask-restx = "^0.5.1"
 Flask-Cors = "^3.0.10"
 black = "^22.3.0"
 flask-mongoengine = "^1.0.0"
 ipdb = "^0.13.9"
 Flask-JWT-Extended = "^4.3.1"
-marshmallow = "3.3"
+flask-marshmallow = "^0.14.0"
+apispec = {extras = ["validation"], version = "^5.1.1"}
+Flask-RESTful = "^0.3.9"
+Jinja2 = "3.0.1"
+flask-apispec = "0.11.0"
+marshmallow = "3.15.0"
 
 [tool.poetry.dev-dependencies]
 

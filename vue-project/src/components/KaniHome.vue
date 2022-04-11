@@ -66,8 +66,6 @@
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
   data: () => ({
     drawer: false,
@@ -93,12 +91,8 @@ export default {
         route: "/",
       },
       {
-        title: "Login",
-        route: "/login",
-      },
-      {
-        title: "Register",
-        route: "/register",
+        title: "Write",
+        route: "/write",
       },
       {
         title: "Category",
@@ -109,27 +103,6 @@ export default {
   watch: {
     group() {
       this.drawer = false;
-    },
-  },
-  created() {
-    axios
-      .get("http://localhost:8000/user/login")
-      .then((res) => {
-        const user = res.data.user;
-
-        if (user) {
-          this.$store.commit("setUser", user);
-        } else {
-          this.$router.push({ name: "Login" });
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-  },
-  computed: {
-    user() {
-      return this.$store.getters.user;
     },
   },
 };

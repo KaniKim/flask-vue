@@ -1,11 +1,12 @@
-from marshmallow import Schema, fields, INCLUDE
+from marshmallow import Schema, INCLUDE
+from marshmallow.fields import Str, Bool
 
 
 class UserSchema(Schema):
-    name = fields.String(required=True)
-    email = fields.String(required=True)
-    password = fields.String(required=True)
-    activated = fields.Boolean(required=False, default=True)
+    name = Str(required=True)
+    email = Str(required=True)
+    password = Str(required=True)
+    activated = Bool(default=True)
 
     class Meta:
         unknown = INCLUDE

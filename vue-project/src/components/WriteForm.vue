@@ -155,8 +155,6 @@ export default {
           content: this.content,
           tags: this.chips,
           category: this.category_name,
-          username: this.$store.getters.user,
-          password: this.$store.getters.password,
         })
         .then((res) => {
           console.log(res);

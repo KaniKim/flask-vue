@@ -1,3 +1,4 @@
+from __future__ import annotations
 from marshmallow import Schema, fields
 
 from .user import UserSchema
@@ -5,10 +6,10 @@ from .user import UserSchema
 
 class CommentSchema(Schema):
     content = fields.String(required=False)
-    like = fields.Integer(default=0)
+    like = fields.Integer()
     author = fields.Nested(UserSchema(only=("name",)))
     next_comment = fields.List(
-        fields.Nested(lambda: CommentSchema(exclude=("next_comment",)))
+        fields.Nested(lambda: CommentSchema(exclude="next_comment"), many=True)
     )
 
 

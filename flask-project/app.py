@@ -1,15 +1,20 @@
 from flask import Flask
-from flask_restx import Api
 from flask_cors import CORS
-
+from flask_restful import Api
+from apispec import APISpec
+from apispec.ext.marshmallow import MarshmallowPlugin
+from flask_apispec.extension import FlaskApiSpec
+from flask_jwt_extended import JWTManager
 
 from .config import Config
 from .model import db
-from .api.user_api import User
-from .api.post_api import Post, Comment, Category, Tag
+from .api.user_api import User, UserAuth
+from .api.post_api import Post, Category
 
 
 app = Flask(__name__)
+
+
 app.config["MONGODB_SETTINGS"] = {
     "db": "test",
     "port": 27017,
@@ -25,11 +30,26 @@ app.config["JWT_REFRESH_TOKEN_EXPIRES"] = Config.refresh
 
 CORS(app)
 
+jwt = JWTManager(app)
 api = Api(app)
-api.add_namespace(User, "/user")
-api.add_namespace(Post, "/post")
-api.add_namespace(Comment, "/comment")
-api.add_namespace(Category, "/category")
-api.add_namespace(Tag, "/tag")
 
+api.add_resource(UserAuth, "/auth", endpoint="auth")
+api.add_resource(User, "/user", endpoint="user")
+api.add_resource(Post, "/post", endpoint="post")
+api.add_resource(Category, "/category", endpoint="category")
+
+app.config["APISPEC_SPEC"] = APISpec(
+    title="Awesome Project",
+    version="v1",
+    plugins=[MarshmallowPlugin()],
+    openapi_version="2.0.0",
+)
+
+docs = FlaskApiSpec(app)
+
+with app.app_context():
+    docs.register(User, "user")
+    docs.register(UserAuth, "auth")
+    docs.register(Post, "post")
+    docs.register(Category, "category")
 db.init_app(app)
