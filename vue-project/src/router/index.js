@@ -8,6 +8,7 @@ import KaniHome from "@/components/KaniHome";
 import MyHome from "@/components/MyHome";
 import WriteForm from "@/components/WriteForm";
 import CategoryPost from "@/components/CategoryPost";
+import CategoryMain from "@/components/CategoryMain";
 
 const routes = [
   {
@@ -28,8 +29,8 @@ const routes = [
     meta: { unauthorized: true },
   },
   {
-    path: "/category",
-    name: "Category",
+    path: "/category/post/:cate",
+    name: "CatePost",
     component: CategoryPost,
   },
   {
@@ -41,6 +42,11 @@ const routes = [
     path: "/write",
     name: "Write",
     component: WriteForm,
+  },
+  {
+    path: "/category",
+    name: "Category",
+    component: CategoryMain,
   },
 ];
 

@@ -42,39 +42,38 @@ class PostRepository(BasePostRepository):
         tag_mongo = [Tag(name=tag) for tag in tags]
         for tag in tag_mongo:
             tag.save()
-
-        Post(
+        post_author = User.objects.filter(email=author).first()
+        post = Post(
             title=title,
-            author=author,
+            author=post_author,
             content=content,
             tags=tag_mongo,
             comments=comments,
-        ).save()
+        )
+        post.save()
 
-        Category(
-            name=category,
-            posts=[
-                Post(
-                    title=title,
-                    author=author,
-                    content=content,
-                    tags=tag_mongo,
-                    comments=comments,
-                ).save()
-            ],
-        ).save()
+        category_model = Category.objects.filter(name=category).first()
+
+        if category_model is None:
+            Category(
+                name=category,
+                posts=[post.to_dbref()],
+            ).save()
+        else:
+            category_model.posts.append(post).save()
 
         return {
             "title": title,
-            "author": User.name,
+            "author": post_author.name,
             "content": content,
             "tags": tags,
             "comments": [],
         }
 
     def find_posts_by_category(self, category: str):
+
         posts = Category.objects.filter(name=category)[0].posts
-        posts_model = [Post.objects.filter(id=post.id)[0] for post in posts]
+        posts_model = [Post.objects.filter(id=post.id).first() for post in posts]
 
         return [
             {

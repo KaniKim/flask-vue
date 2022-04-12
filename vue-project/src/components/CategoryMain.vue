@@ -31,26 +31,30 @@
   <br />
   <br />
   <v-row justify="center">
-    <v-col cols="12" sm="6">
-      <v-table dark>
-        <template v-slot:default>
+    <v-col cols="6">
+      <div id="app">
+        <v-table height="300px">
           <thead>
             <tr>
-              <th class="text-left">Name</th>
-              <th class="text-left">Calories</th>
+              <th class="text-left">Number</th>
+              <th class="text-left">Category</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in items" :key="item.name">
-              <td>{{ item.title }}</td>
-              <td>{{ item.author }}</td>
+            <tr
+              v-for="(item, i) in slides"
+              :key="i"
+              style="cursor: pointer"
+              @click="cateProfile(item)"
+            >
+              <td>{{ i + 1 }}</td>
+              <td>{{ item }}</td>
             </tr>
           </tbody>
-        </template>
-      </v-table>
+        </v-table>
+      </div>
     </v-col>
   </v-row>
-
   <v-footer padless fixed width="100%" bottom class="bg-grey-lighten-1">
     <v-container fluid>
       <v-row justify="center">
@@ -80,7 +84,7 @@ export default {
   data: () => ({
     drawer: false,
     valid: true,
-    items: null,
+    slides: null,
     select: null,
     checkbox: false,
     links: ["Home", "About Us", "Category", "Contact Us"],
@@ -108,18 +112,19 @@ export default {
     axios.defaults.headers.common["Authorization"] =
       Cookies.get("access_token");
     axios
-      .get("http://localhost:8000/post", {
-        params: {
-          category_name: this.$route.params.cate,
-        },
-      })
+      .get("http://localhost:8000/category")
       .then((res) => {
-        console.log(res);
-        this.items = res.data;
+        console.log(res.data);
+        this.slides = res.data;
       })
       .catch((err) => {
         alert(err);
       });
+  },
+  methods: {
+    cateProfile(cate) {
+      window.location.href = "http://localhost:8080/category/post/" + cate;
+    },
   },
   watch: {
     group() {
