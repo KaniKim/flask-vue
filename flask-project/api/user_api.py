@@ -37,6 +37,32 @@ class User(MethodResource, Resource):
 class UserAuth(MethodResource, Resource):
     @marshal_with(UserSchema)
     def post(self):
+        refresh = request.headers.get("refresh")
+        if refresh:
+            current_user = jwt.decode(refresh, Config.key, algorithms="HS256")
+
+            if "username" not in current_user:
+                return make_response(jsonify("No User Data"), 404)
+            user = UserRepo.find_user_by_email(email=current_user["username"])
+
+            if user:
+                return make_response(
+                    jsonify(
+                        username=user[0]["email"],
+                        access_token=jwt.encode(
+                            {
+                                "username": user[0]["email"],
+                                "exp": datetime.datetime.utcnow()
+                                + datetime.timedelta(minutes=15),
+                            },
+                            Config.key,
+                            algorithm="HS256",
+                        ),
+                    ),
+                    200,
+                )
+            else:
+                return make_response(jsonify("Wrong Token"), 404)
 
         if not request:
             return make_response(jsonify({"msg": "Missing Login Info"}), 400)
@@ -53,12 +79,26 @@ class UserAuth(MethodResource, Resource):
         else:
 
             access_token = jwt.encode(
-                {"username": user[0]["email"]}, Config.key, algorithm="HS256"
+                {
+                    "username": user[0]["email"],
+                    "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=15),
+                },
+                Config.key,
+                algorithm="HS256",
+            )
+            refresh_token = jwt.encode(
+                {
+                    "username": user[0]["email"],
+                    "exp": datetime.datetime.utcnow() + datetime.timedelta(weeks=2),
+                },
+                Config.key,
+                algorithm="HS256",
             )
             return make_response(
                 jsonify(
                     username=user[0]["email"],
                     access_token=access_token,
+                    refresh_token=refresh_token,
                 ),
                 200,
             )

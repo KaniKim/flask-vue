@@ -1,13 +1,13 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-import { refreshToken } from "@/plugins/login";
+import { parseJwt, refreshToken } from "@/plugins/login";
 
 const AxiosInst = axios.create();
 
 AxiosInst.interceptors.request.use(
   async function (config) {
     config.headers.authorization = Cookies.get("access_token");
-
+    config.headers.refresh = Cookies.get("refresh_token");
     return config;
   },
   (err) => {
@@ -20,12 +20,9 @@ AxiosInst.interceptors.response.use(
     return res;
   },
   async (err) => {
-    const errAPI = err.config;
-
-    if (err.response.data.status === 400 && errAPI.retry === undefined) {
-      errAPI.retry = true;
+    console.log(err.response);
+    if (err.response.status === 400) {
       await refreshToken();
-      return axios(errAPI);
     }
     return Promise.reject(err);
   }
