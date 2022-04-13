@@ -32,7 +32,7 @@ const routes = [
     meta: { unauthorized: true },
   },
   {
-    path: "/category/post/id/:id",
+    path: "/category/post/id/:object",
     name: "PostId",
     component: PostComment,
     meta: { unauthorized: false },

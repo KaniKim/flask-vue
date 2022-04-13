@@ -1,6 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-import { parseJwt, refreshToken } from "@/plugins/login";
+import { refreshToken } from "@/plugins/login";
 
 const AxiosInst = axios.create();
 

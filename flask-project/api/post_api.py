@@ -3,6 +3,7 @@ from flask_restful import Resource
 from flask_apispec import MethodResource
 
 import jwt
+import bson
 
 from ..config import Config
 from ..repository.post import PostRepository
@@ -44,13 +45,17 @@ class Category(MethodResource, Resource):
         return category_repo.find_all_category()
 
 
-class PostComment(MethodResource, Resource):
-    def get(self):
-
-        Auth().get_header(header=request.headers.get("Authorization"))
-
-
 class Post(MethodResource, Resource):
+    def get(self, id):
+        print(id)
+        current_user = Auth().get_header(header=request.headers.get("Authorization"))
+
+        if isinstance(current_user, int):
+            return make_response(jsonify("Token Expired"), current_user)
+        return post_repo.find_post_by_obj(bson.objectid.ObjectId(id))
+
+
+class PostAll(MethodResource, Resource):
     def post(self):
 
         current_user = Auth().get_header(header=request.headers.get("Authorization"))

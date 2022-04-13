@@ -9,7 +9,7 @@ from flask_jwt_extended import JWTManager
 from .config import Config
 from .model import db
 from .api.user_api import User, UserAuth
-from .api.post_api import Post, Category
+from .api.post_api import Post, Category, PostAll
 
 
 app = Flask(__name__)
@@ -36,7 +36,8 @@ api = Api(app)
 
 api.add_resource(UserAuth, "/auth", endpoint="auth")
 api.add_resource(User, "/user", endpoint="user")
-api.add_resource(Post, "/post", endpoint="post")
+api.add_resource(PostAll, "/post", endpoint="post")
+api.add_resource(Post, "/post/<string:id>", endpoint="post_detail")
 api.add_resource(Category, "/category", endpoint="category")
 
 app.config["APISPEC_SPEC"] = APISpec(
@@ -51,6 +52,7 @@ docs = FlaskApiSpec(app)
 with app.app_context():
     docs.register(User, "user")
     docs.register(UserAuth, "auth")
-    docs.register(Post, "post")
+    docs.register(Post, "post_detail")
     docs.register(Category, "category")
+    docs.register(PostAll, "post")
 db.init_app(app)

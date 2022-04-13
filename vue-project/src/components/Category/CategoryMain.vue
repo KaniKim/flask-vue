@@ -34,16 +34,13 @@ import AxiosInst from "@/plugins/axios";
 
 export default {
   data: () => ({
-    valid: true,
     slides: null,
-    select: null,
   }),
 
   created() {
     AxiosInst.get("http://localhost:8000/category")
       .then((res) => {
         this.slides = res.data;
-        console.log(res.data);
       })
       .catch((err) => {
         alert(err);
@@ -52,11 +49,6 @@ export default {
   methods: {
     cateProfile(cate) {
       window.location.href = "http://localhost:8080/category/post/" + cate;
-    },
-  },
-  watch: {
-    group() {
-      this.drawer = false;
     },
   },
 };

@@ -96,6 +96,16 @@ class PostRepository(BasePostRepository):
         ]
 
     def find_post_by_obj(self, obj: ObjectId):
-        post_model = Post.objects.filter(id=obj).first()
+        post = Post.objects.filter(id=obj).first()
 
-        return json.loads(post_model.to_json())
+        return {
+            "title": post.title,
+            "author": json.loads(User.objects.filter(id=post.author.id)[0].to_json())[
+                "name"
+            ],
+            "content": post.content,
+            "tags": [
+                json.loads(Tag.objects.filter(id=tag.id)[0].to_json())["name"]
+                for tag in post.tags
+            ],
+        }

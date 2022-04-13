@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app :dark="true">
     <v-main>
       <DrawNav></DrawNav>
       <router-view></router-view>
