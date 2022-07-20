@@ -1,17 +1,25 @@
 <template>
-  <v-app :dark="true">
-    <v-main>
-      <DrawNav></DrawNav>
-      <router-view></router-view>
-      <FooFighter></FooFighter>
-    </v-main>
+  <v-app>
+    <LayoutFullVue></LayoutFullVue>
+    <v-main><router-view></router-view></v-main>
+    <FooFightVue></FooFightVue>
   </v-app>
 </template>
 
 <script>
-import DrawNav from "@/components/layout/DrawNav";
-import FooFighter from "@/components/layout/FooFighter";
+import LayoutFullVue from './components/LayoutFull.vue';
+import FooFightVue from './components/layouts/FooFight';
+
 export default {
-  components: { FooFighter, DrawNav },
+  name: 'App',
+
+  components: {
+    FooFightVue,
+    LayoutFullVue,
+  },
+
+  data: () => ({
+    //
+  }),
 };
 </script>
