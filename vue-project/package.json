@@ -16,6 +16,7 @@
     "roboto-fontface": "*",
     "vue": "^3.2.13",
     "vue-router": "^4.0.13",
+    "vue3-cookies": "^1.0.6",
     "vuelidate": "^0.7.7",
     "vuetify": "npm:@vuetify/nightly@next",
     "vuex": "^4.0.0",

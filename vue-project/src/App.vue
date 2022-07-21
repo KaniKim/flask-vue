@@ -17,9 +17,6 @@ export default {
     FooFightVue,
     LayoutFullVue,
   },
-
-  data: () => ({
-    //
-  }),
+  created() {},
 };
 </script>

@@ -13,13 +13,13 @@
     </v-row>
     <br />
     <br />
-    <v-form>
+    <v-form @submit.prevent="submitForm">
       <v-container>
         <v-row align="center" justify="center">
           <v-col cols="12" sm="6">
             <v-text-field
               v-model="email"
-              :rules="rules"
+              :rules="emailRules"
               counter="25"
               hint="This field is for email"
               label="Email"
@@ -30,16 +30,16 @@
           <v-col cols="12" sm="6">
             <v-text-field
               v-model="password"
-              :rules="rules"
+              type="password"
               counter="25"
-              hint="This field is for id"
+              hint="This field is for password"
               label="Password"
             ></v-text-field>
           </v-col>
         </v-row>
         <v-row align="center" justify="center">
           <v-col cols="6" sm="6">
-            <v-btn variant="outlined" color="primary" block>
+            <v-btn type="submit" variant="outlined" color="primary" block>
               Check Login
             </v-btn>
           </v-col>
@@ -50,13 +50,42 @@
 </template>
 
 <script>
+import { loginUser } from '@/api';
+
 export default {
   data() {
     return {
       email: '',
       password: '',
-      rules: [v => v.length <= 25 || 'Max 25 characters'],
+      emailRules: [
+        email =>
+          !email ||
+          /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email) ||
+          'E-mail must be valid',
+      ],
     };
+  },
+  methods: {
+    async submitForm() {
+      const userData = {
+        email: this.email,
+        password: this.password,
+      };
+      await loginUser(userData)
+        .then(res => {
+          console.log(res);
+          localStorage.setItem('jwt', res.data);
+        })
+        .catch(err => {
+          alert(err);
+        });
+      await this.$router.push({ path: '/' });
+      this.initForm();
+    },
+    initForm() {
+      this.password = '';
+      this.email = '';
+    },
   },
 };
 </script>

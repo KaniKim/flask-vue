@@ -19,18 +19,17 @@
           <v-col cols="12" sm="6">
             <v-text-field
               v-model="email"
-              :rules="rules"
+              :rules="emailRules"
               counter="25"
               hint="This field is for email"
               label="Email"
             ></v-text-field>
           </v-col>
         </v-row>
-        <v-row align="centeR" justify="center">
+        <v-row align="center" justify="center">
           <v-col cols="12" sm="6">
             <v-text-field
               v-model="name"
-              :rules="rules"
               counter="25"
               hint="This field is for name"
               label="Name"
@@ -41,7 +40,8 @@
           <v-col cols="12" sm="6">
             <v-text-field
               v-model="password"
-              :rules="rules"
+              :rules="passwordRules"
+              type="password"
               counter="25"
               hint="This field is for id"
               label="Password"
@@ -69,9 +69,25 @@ export default {
       name: '',
       email: '',
       password: '',
-      rules: [v => v.length <= 25 || 'Max 25 characters'],
+      passwordRules: [
+        password => !!password || 'Please enter a password',
+        password => !!password || 'Please type password.',
+        password =>
+          (password &&
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/.test(
+              password,
+            )) ||
+          'Minimum 6 characters, One capital latter, Special character, Number',
+      ],
+      emailRules: [
+        email =>
+          !email ||
+          /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email) ||
+          'E-mail must be valid',
+      ],
     };
   },
+
   methods: {
     async submitForm() {
       const userData = {
@@ -79,7 +95,14 @@ export default {
         email: this.email,
         password: this.password,
       };
-      await registerUser(userData);
+      await registerUser(userData)
+        .then(() => {
+          this.$router.push({ name: 'Login' });
+        })
+        .catch(err => {
+          alert(err);
+        });
+      this.initForm();
     },
     initForm() {
       this.name = '';

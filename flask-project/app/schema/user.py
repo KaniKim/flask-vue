@@ -1,5 +1,9 @@
 from marshmallow import fields, Schema
 
+
+class UserLoginSchema(Schema):
+    jwt = fields.Str()
+
 class UserSignUpSchema(Schema):
     name = fields.Str()
     email = fields.Str()

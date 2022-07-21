@@ -10,6 +10,7 @@ app.config.update(
     DEBUG = True,
     JWT_SECRET_KEY = "HELLO GUYS"
 )
+
 connect("test", username="kani", password="123456", host="mongodb://kani:123456@127.0.01:27017/test?authSource=admin", port=27017)
 CORS(app,
      supports_credentials=True,

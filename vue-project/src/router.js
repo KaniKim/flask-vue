@@ -16,6 +16,11 @@ const routes = [
     name: 'Login',
     component: () => import('@/components/auth/LoginAuth'),
   },
+  {
+    path: '/me',
+    name: 'Me',
+    component: () => import('@/components/boards/MyEdit'),
+  },
 ];
 
 export const router = createRouter({

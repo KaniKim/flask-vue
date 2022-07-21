@@ -12,8 +12,6 @@ export default {
     LayoutBarVue,
   },
 
-  data: () => ({
-    //
-  }),
+  data: () => ({}),
 };
 </script>

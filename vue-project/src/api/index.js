@@ -1,8 +1,19 @@
 import axios from 'axios';
 
 function registerUser(userData) {
-  const url = 'http://localhost:5000/user/sign-up';
-  return axios.post(url, userData);
+  return axios.post('http://localhost:5000/user/sign-up', userData);
 }
 
-export { registerUser };
+function loginUser(userData) {
+  return axios.post('http://localhost:5000/user/login', userData);
+}
+
+function checkUser() {
+  return axios.get('http://localhost:5000/user/me', {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+    },
+  });
+}
+
+export { registerUser, loginUser, checkUser };
