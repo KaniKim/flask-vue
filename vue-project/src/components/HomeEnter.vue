@@ -30,7 +30,7 @@ export default {
   created() {
     checkUser()
       .then(res => {
-        this.user_name = res.data;
+        this.user_name = res.data['name'];
       })
       .catch(err => {
         alert(err);

@@ -19,11 +19,14 @@ const routes = [
   {
     path: '/me',
     name: 'Me',
-    component: () => import('@/components/boards/MyEdit'),
+    component: () => import('@/components/users/MyEdit'),
   },
 ];
 
 export const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior() {
+    document.getElementById('app').scrollIntoView();
+  },
 });

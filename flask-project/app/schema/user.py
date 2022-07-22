@@ -5,13 +5,16 @@ class UserLoginSchema(Schema):
     jwt = fields.Str()
 
 class UserSignUpSchema(Schema):
-    name = fields.Str()
-    email = fields.Str()
-    password = fields.Str()
+    name = fields.Str(required=True)
+    email = fields.Str(reuqired=True)
+    password = fields.Str(required=True)
 
 class UserSchema(Schema):
-    id = fields.Str()
-    name = fields.Str()
-    email = fields.Email()
-    password = fields.Str()
+    _id = fields.Str()
+    name = fields.Str(required=True)
+    email = fields.Email(required=True)
+    password = fields.Str(load_only=True, required=True)
     activated = fields.Bool()
+
+    class Meta:
+        fields = ("_id", "name", "email", "password", "activated",)

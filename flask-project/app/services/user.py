@@ -1,11 +1,9 @@
-import datetime
-
 import bcrypt
-from flask_jwt_extended import create_access_token
+import datetime
 from typing import Optional
 
 from app.model.user import UserModel
-from app.error.user import UserAlreadyExistError, UserPasswordNotCorrectError
+from app.error.user import UserAlreadyExistError
 
 
 class UserService:
@@ -27,30 +25,16 @@ class UserService:
         )
         user_model.save()
 
-    def login(self):
-        user = UserModel.objects(email=self.email).first()
-
-        if user is not None and bcrypt.checkpw(self.password.encode("utf-8"), user.password.encode("utf-8")):
-            return create_access_token(identity=self.email, expires_delta=datetime.timedelta(hours=24))
-        else:
-            raise UserPasswordNotCorrectError("User password Not Correct", 401)
-
     def edit(self):
-        user = UserModel.objects(email=self.email)
-
-        if user is not None and bcrypt.checkpw(self.password.encode("utf-8"), user.password.encode("utf-8")):
-            user.update(name=self.name)
-            user.save()
-            return True
-        else:
-            raise UserPasswordNotCorrectError("User password Not Correct", 401)
+        return UserModel.objects(email=self.email).update(name=self.name)
 
     def delete(self):
-        user = UserModel.objects(email=self.email)
+        user = UserModel.objects(email=self.email).first()
 
-        if user is not None and bcrypt.checkpw(self.password.encode("utf-8"), user.password.encode("utf-8")):
-            user.delete()
+        if user is not None:
+            user.deleted_at = datetime.datetime.utcnow()
+            user.activated = False
+            user.save()
             return True
-        else:
-            raise UserPasswordNotCorrectError("User password Not Correct", 401)
+        return False
 
