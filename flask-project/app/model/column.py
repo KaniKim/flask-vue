@@ -1,4 +1,4 @@
-from mongoengine import Document, StringField, IntField, ReferenceField, ListField
+from mongoengine import Document, StringField, IntField, ReferenceField, ListField, LazyReferenceField
 from app.model.user import UserModel
 
 
@@ -7,20 +7,22 @@ class TagModel(Document):
 
 
 class CommentModel(Document):
+    title = StringField(max_length=255, required=True)
     content = StringField(max_length=255, required=True)
-    like = IntField()
+    like = IntField(default=0)
     author = ReferenceField(UserModel)
-    next_comment = ListField(ReferenceField("self"))
+    next_comment = ListField(LazyReferenceField("self"))
 
 
 class ColumnModel(Document):
     title = StringField(max_length=255, required=True)
     author = ReferenceField(UserModel)
     content = StringField()
+    like = IntField(default=0)
     tags = ListField(ReferenceField(TagModel))
-    comments = ListField(ReferenceField(CommentModel))
+    comments = ListField(LazyReferenceField(CommentModel))
 
 
 class BoardModel(Document):
-    columns = ListField(ReferenceField(ColumnModel))
+    columns = ListField(LazyReferenceField(ColumnModel))
     name = StringField(max_length=255, required=True)

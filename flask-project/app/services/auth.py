@@ -15,5 +15,5 @@ def check_password(f):
                 return f(self, **kwargs)
             else:
                 raise UserPasswordNotCorrectError("wrong password", 409)
-        return f(self, None, None, None)
+        return f(self, **kwargs)
     return decorated_func

@@ -21,6 +21,16 @@ const routes = [
     name: 'Me',
     component: () => import('@/components/users/MyEdit'),
   },
+  {
+    path: '/board',
+    name: 'Board',
+    component: () => import('@/components/boards/BoardCategory'),
+  },
+  {
+    path: '/write',
+    name: 'Write',
+    component: () => import('@/components/boards/ColumnWrite'),
+  },
 ];
 
 export const router = createRouter({

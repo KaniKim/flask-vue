@@ -64,11 +64,16 @@ export default {
           title: 'Board',
           id: 2,
           icon: 'mdi-information',
-          to: '/',
+          to: '/board',
+        },
+        {
+          title: 'Write',
+          id: 3,
+          to: '/write',
         },
         {
           title: 'Info',
-          id: 3,
+          id: 4,
           to: '/me',
         },
       ],
