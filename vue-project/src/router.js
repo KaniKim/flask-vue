@@ -30,6 +30,7 @@ const routes = [
     path: '/column',
     name: 'Column',
     component: () => import('@/components/boards/ColumnSpecific'),
+    props: true,
   },
   {
     path: '/write',

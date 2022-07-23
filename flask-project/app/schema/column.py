@@ -1,12 +1,10 @@
 from marshmallow import fields, Schema
 
-from app.schema.user import UserSchema
-
 class ColumnSchema(Schema):
     title = fields.Str()
     content = fields.Str()
     like = fields.Int()
-    author = fields.Nested(UserSchema())
+    author = fields.Str()
     tags = fields.List(fields.Str())
 
 class ColumnBoardSchema(Schema):

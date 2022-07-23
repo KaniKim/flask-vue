@@ -34,7 +34,7 @@ function specificBoard(specific) {
 
 function specificColumn(specific) {
   return axios.get(
-    `http://localhost:5000/board/${specific.name}/column/${specific.column.id}`,
+    `http://localhost:5000/board/${specific.name}/column/${specific.column_id}`,
     {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('jwt')}`,

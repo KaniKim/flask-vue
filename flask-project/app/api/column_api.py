@@ -5,8 +5,9 @@ from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 import json
+from bson import ObjectId
 
-from app.model.column import ColumnModel, BoardModel
+from app.model.column import ColumnModel, BoardModel, TagModel
 from app.model.user import UserModel
 from app.schema.column import ColumnSchema, ColumnBoardSchema, BoardSchema, ColumnAllSchema
 from app.services.auth import check_password
@@ -45,7 +46,7 @@ class BoardView(FlaskView):
     @jwt_required()
     def index(self):
         boards = BoardModel.objects.all()
-        board_columns = [json.loads(ColumnModel.objects.filter(id=column.id).first().to_json()) for board in boards for column in board.columns ]
+        board_columns = [{"column" : json.loads(ColumnModel.objects.filter(id=column.id).first().to_json()), "name": board.name } for board in boards for column in board.columns ]
         return {"columns": board_columns}, 200
 
     @route('/<board_name>', methods=["GET"])
@@ -68,8 +69,16 @@ class BoardView(FlaskView):
     @marshal_with(None, 404)
     @cross_origin()
     @jwt_required()
-    def get_column(self, board_id, column_id):
-        board = BoardModel.objects.filter(id=board_id).first()
-        if column_id in board.columns:
-            return ColumnModel.objects.filter(id=column_id).first()
-        return None, 404
+    def get_column(self, board_name, column_id):
+        board = BoardModel.objects.filter(name=board_name).first()
+        if board is None:
+            return None, 404
+        column = ColumnModel.objects.filter(id=ObjectId(column_id)).first()
+
+        return_value = {
+            "author": UserModel.objects.filter(id=column.author.id).first().name,
+            "content": column.content,
+            "tags": [TagModel.objects.filter(id=tag.id).first().name for tag in column.tags],
+            "title": column.title,
+        }
+        return return_value, 200

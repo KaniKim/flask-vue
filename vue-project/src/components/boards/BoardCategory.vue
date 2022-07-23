@@ -40,7 +40,6 @@
           theme="white"
           :key="componentKey"
           class="text-xs-center"
-          @click:row="handleClick"
         >
           <thead>
             <tr>
@@ -50,17 +49,19 @@
           </thead>
           <tbody>
             <tr v-for="item in board_columns" :key="item.name">
-              <td>{{ item.title }}</td>
-              <td>{{ item.like }}</td>
+              <router-link
+                style="text-decoration: none; color: inherit"
+                :to="{
+                  name: 'Column',
+                  params: { column_id: item.column._id.$oid, name: item.name },
+                }"
+              >
+                <td>{{ item.column.title }}</td>
+              </router-link>
+              <td>{{ item.column.like }}</td>
             </tr>
           </tbody>
         </v-table>
-        <br />
-        <v-pagination
-          v-model="page"
-          :length="6"
-          class="pagination"
-        ></v-pagination>
       </v-col>
     </v-row>
   </div>
@@ -91,7 +92,6 @@ export default {
     };
   },
   methods: {
-    handleClick() {},
     forceRerender() {
       this.componentKey += 1;
     },
@@ -120,6 +120,7 @@ export default {
             res.data.columns.forEach((data, index, array) => {
               this.board_columns.push(data);
             });
+            this.name = board_name;
           })
           // eslint-disable-next-line no-unused-vars
           .catch(err => {
