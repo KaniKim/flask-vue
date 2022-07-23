@@ -3,7 +3,7 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from mongoengine import connect
 
-from app.api.column_api import ColumnView
+from app.api.column_api import ColumnView, BoardView
 from app.api.user_api import User
 
 app = Flask(__name__)
@@ -30,6 +30,7 @@ jwt = JWTManager(app)
 
 User.register(app, route_base="/user",  trailing_slash=False)
 ColumnView.register(app, route_base="/column", trailing_slash=False)
+BoardView.register(app, route_base='/board', trailing_slash=False)
 
 if __name__ == "__main__":
     app.run()

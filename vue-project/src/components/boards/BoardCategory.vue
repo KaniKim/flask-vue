@@ -3,7 +3,26 @@
     <br />
     <v-row justify="center" align="center">
       <v-col cols="8">
-        <v-table theme="white">
+        <v-sheet class="mx-auto" max-width="600">
+          <v-slide-group show-arrows>
+            <v-slide-group-item
+              v-for="board_category in board_name"
+              :key="board_category"
+              v-slot="{ isSelected, toggle }"
+            >
+              <v-btn
+                class="ma-2"
+                rounded
+                :color="isSelected ? 'primary' : undefined"
+                @click="getColumns(board_category)"
+                v-on:click="toggle"
+              >
+                {{ board_category }}
+              </v-btn>
+            </v-slide-group-item>
+          </v-slide-group>
+        </v-sheet>
+        <v-table theme="white" :key="componentKey">
           <thead>
             <tr>
               <th class="text-left">Name</th>
@@ -11,9 +30,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in desserts" :key="item.name">
-              <td>{{ item.name }}</td>
-              <td>{{ item.calories }}</td>
+            <tr v-for="item in board_columns" :key="item.name">
+              <td>{{ item.title }}</td>
+              <td>{{ item.like }}</td>
             </tr>
           </tbody>
         </v-table>
@@ -28,53 +47,49 @@
   </div>
 </template>
 <script>
+import { allColumn } from '@/api/column';
+
 export default {
   data() {
     return {
-      desserts: [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-        },
-      ],
+      board_columns: [],
       page: 1,
+      componentKey: 0,
+      board_name: [
+        'All',
+        'Science',
+        'Art',
+        'NFT',
+        'BlockChain',
+        'AI',
+        'AIMMO',
+        'Security',
+        'Nichijou',
+        'ETC',
+      ],
+      name: '',
     };
+  },
+  methods: {
+    forceRerender() {
+      this.componentKey += 1;
+    },
+    getColumns(board_name) {
+      if (board_name === 'All') {
+        allColumn()
+          .then(res => {
+            this.board_columns = [];
+            // eslint-disable-next-line no-unused-vars
+            res.data.columns.forEach((data, index, array) => {
+              this.board_columns.push(data);
+            });
+          })
+          .catch(err => {
+            alert(err);
+          });
+        this.forceRerender();
+      }
+    },
   },
 };
 </script>

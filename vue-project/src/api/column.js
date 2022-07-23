@@ -16,4 +16,12 @@ function myColumn() {
   });
 }
 
-export { writeColumn, myColumn };
+function allColumn() {
+  return axios.get('http://localhost:5000/board/all', {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+    },
+  });
+}
+
+export { writeColumn, myColumn, allColumn };
