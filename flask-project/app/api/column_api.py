@@ -48,18 +48,21 @@ class BoardView(FlaskView):
         board_columns = [json.loads(ColumnModel.objects.filter(id=column.id).first().to_json()) for board in boards for column in board.columns ]
         return {"columns": board_columns}, 200
 
-    @route('/page/<board_id>', methods=["GET"])
+    @route('/<board_name>', methods=["GET"])
     @doc(description="특정 Board의 게시글들 조회", summary="게시글들 조회")
     @marshal_with(BoardSchema(), 200)
+    @use_kwargs(BoardSchema(only=("name",), partial=True), locations=("json",))
     @marshal_with(None, 404)
     @cross_origin()
     @jwt_required()
-    def get_board(self, board_id):
-        board = BoardModel.objects.filter(id=board_id).first()
-        board_columns = [ColumnModel.objects.filter(id=column_id).first() for column_id in board.columns]
+    def get_board(self, board_name):
+        board = BoardModel.objects.filter(name=board_name).first()
+        if board is None:
+            return "There is no COLUMN", 404
+        board_columns = [json.loads(ColumnModel.objects.filter(id=column.id).first().to_json()) for column in board.columns]
         return {"name": board.name, "columns": board_columns}, 200
 
-    @route('/page/<board_id>/column/<column_id>', methods=["GET"])
+    @route('/<board_name>/column/<column_id>', methods=["GET"])
     @doc(description="특정 Board의 게시글 조회", summary="게시글 조회")
     @marshal_with(ColumnSchema(), 200)
     @marshal_with(None, 404)

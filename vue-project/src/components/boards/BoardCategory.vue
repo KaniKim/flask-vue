@@ -1,5 +1,18 @@
 <template>
-  <div class="text-center">
+  <div align="center">
+    <v-alert
+      v-if="alert"
+      v-model="alert"
+      border="start"
+      variant="tonal"
+      closable="true"
+      close-label="Close Alert"
+      color="deep-purple accent-4"
+      title="Closable Alert"
+      :key="componentKey"
+    >
+      At {{ name }}, there is not existed columns. Lets write some columns.
+    </v-alert>
     <br />
     <v-row justify="center" align="center">
       <v-col cols="8">
@@ -22,11 +35,17 @@
             </v-slide-group-item>
           </v-slide-group>
         </v-sheet>
-        <v-table theme="white" :key="componentKey">
+        <v-table
+          align="center"
+          theme="white"
+          :key="componentKey"
+          class="text-xs-center"
+          @click:row="handleClick"
+        >
           <thead>
             <tr>
               <th class="text-left">Name</th>
-              <th class="text-left">Calories</th>
+              <th class="text-left">Like</th>
             </tr>
           </thead>
           <tbody>
@@ -47,11 +66,12 @@
   </div>
 </template>
 <script>
-import { allColumn } from '@/api/column';
+import { allColumn, specificBoard } from '@/api/column';
 
 export default {
   data() {
     return {
+      alert: false,
       board_columns: [],
       page: 1,
       componentKey: 0,
@@ -71,6 +91,7 @@ export default {
     };
   },
   methods: {
+    handleClick() {},
     forceRerender() {
       this.componentKey += 1;
     },
@@ -78,6 +99,9 @@ export default {
       if (board_name === 'All') {
         allColumn()
           .then(res => {
+            if (this.alert === true) {
+              this.alert = false;
+            }
             this.board_columns = [];
             // eslint-disable-next-line no-unused-vars
             res.data.columns.forEach((data, index, array) => {
@@ -86,6 +110,22 @@ export default {
           })
           .catch(err => {
             alert(err);
+          });
+      } else {
+        specificBoard(board_name)
+          .then(res => {
+            this.board_columns = [];
+            this.alert = false;
+            // eslint-disable-next-line no-unused-vars
+            res.data.columns.forEach((data, index, array) => {
+              this.board_columns.push(data);
+            });
+          })
+          // eslint-disable-next-line no-unused-vars
+          .catch(err => {
+            this.board_columns = [];
+            this.alert = true;
+            this.name = board_name;
           });
         this.forceRerender();
       }

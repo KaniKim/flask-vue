@@ -27,6 +27,11 @@ const routes = [
     component: () => import('@/components/boards/BoardCategory'),
   },
   {
+    path: '/column',
+    name: 'Column',
+    component: () => import('@/components/boards/ColumnSpecific'),
+  },
+  {
     path: '/write',
     name: 'Write',
     component: () => import('@/components/boards/ColumnWrite'),
