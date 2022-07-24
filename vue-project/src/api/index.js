@@ -1,33 +1,33 @@
-import axios from 'axios';
+import Axios from '@/api/axios_interceptor';
 
 function registerUser(userData) {
-  return axios.post('http://localhost:5000/user/sign-up', userData);
+  return Axios.post('/user/sign-up', userData);
 }
 
 function loginUser(userData) {
-  return axios.post('http://localhost:5000/user/login', userData);
+  return Axios.post('/user/login', userData);
 }
 
 function editUser(userData) {
-  return axios.put('http://localhost:5000/user/me', userData, {
+  return Axios.put('/user/me', userData, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`,
     },
   });
 }
 
 function checkUser() {
-  return axios.get('http://localhost:5000/user/me', {
+  return Axios.get('/user/me', {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`,
     },
   });
 }
 
 function deleteUser(userData) {
-  return axios.delete('http://localhost:5000/user/me', {
+  return Axios.delete('/user/me', {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`,
     },
     data: {
       email: userData.email,

@@ -14,8 +14,7 @@
           value="item.value"
           color="white"
           :key="index"
-          link
-          @click="this.$router.push(item.to)"
+          :to="item.to"
           >{{ item.title }}</v-list-item
         >
       </v-list>
@@ -25,8 +24,7 @@
           value="item.value"
           color="white"
           :key="index"
-          link
-          @click="this.$router.push(item.to)"
+          :to="item.to"
           >{{ item.title }}</v-list-item
         >
       </v-list>
@@ -83,7 +81,7 @@ export default {
     forceRerender() {
       this.componentKey += 1;
       this.drawer = !this.drawer;
-      this.isLogin = !!localStorage.getItem('jwt');
+      this.isLogin = !!localStorage.getItem('access_token');
     },
   },
 };

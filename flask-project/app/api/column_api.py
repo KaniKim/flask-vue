@@ -9,7 +9,7 @@ from bson import ObjectId
 
 from app.model.column import ColumnModel, BoardModel, TagModel
 from app.model.user import UserModel
-from app.schema.column import ColumnSchema, ColumnBoardSchema, BoardSchema, ColumnAllSchema
+from app.schema.column import ColumnSchema, ColumnBoardSchema, BoardSchema, ColumnAllSchema, LikeSchema
 from app.services.auth import check_password
 from app.services.column import ColumnService
 
@@ -37,6 +37,21 @@ class ColumnView(FlaskView):
         if ColumnService(title=title, content=content, tags=tags, email=get_jwt_identity(), name=name).save_column():
             return "SUCCESS", 201
         return "FAILED", 404
+
+    @doc(description="Column 좋아요 추가", summary="Column 좋아요 추가")
+    @route("/<column_id>/like", methods=["POST"])
+    @cross_origin()
+    @jwt_required()
+    @marshal_with(LikeSchema(), 201)
+    def like_column(self, column_id):
+        column = ColumnModel.objects(id=ObjectId(column_id)).first()
+        if column:
+            column.like += 1
+            column.save()
+            return column.like, 201
+        return None, 404
+
+
 
 class BoardView(FlaskView):
     @route('/all', methods=["GET"])
@@ -76,9 +91,11 @@ class BoardView(FlaskView):
         column = ColumnModel.objects.filter(id=ObjectId(column_id)).first()
 
         return_value = {
+            "id": str(column.id),
             "author": UserModel.objects.filter(id=column.author.id).first().name,
             "content": column.content,
             "tags": [TagModel.objects.filter(id=tag.id).first().name for tag in column.tags],
             "title": column.title,
+            "like": column.like,
         }
         return return_value, 200

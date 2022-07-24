@@ -1,11 +1,15 @@
 from marshmallow import fields, Schema
 
 class ColumnSchema(Schema):
+    id = fields.Str()
     title = fields.Str()
     content = fields.Str()
     like = fields.Int()
     author = fields.Str()
     tags = fields.List(fields.Str())
+
+class LikeSchema(Schema):
+    like = fields.Str()
 
 class ColumnBoardSchema(Schema):
     title = fields.Str()

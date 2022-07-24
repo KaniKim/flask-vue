@@ -52,8 +52,7 @@
               <router-link
                 style="text-decoration: none; color: inherit"
                 :to="{
-                  name: 'Column',
-                  params: { column_id: item.column._id.$oid, name: item.name },
+                  path: `/board/${item.name}/column/${item.column._id.$oid}`,
                 }"
               >
                 <td>{{ item.column.title }}</td>

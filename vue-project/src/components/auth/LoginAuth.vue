@@ -73,8 +73,9 @@ export default {
       };
       await loginUser(userData)
         .then(res => {
-          console.log(res);
-          localStorage.setItem('jwt', res.data);
+          console.log(res.data);
+          localStorage.setItem('access_token', res.data.access_token);
+          localStorage.setItem('refresh_token', res.data.refresh_token);
         })
         .catch(err => {
           alert(err);

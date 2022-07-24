@@ -1,46 +1,58 @@
-import axios from 'axios';
+import Axios from '@/api/axios_interceptor';
 
 function writeColumn(columnData) {
-  return axios.post('http://localhost:5000/column/', columnData, {
+  return Axios.post('/column/', columnData, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`,
     },
   });
 }
 
 function myColumn() {
-  return axios.get('http://localhost:5000/column/me', {
+  return Axios.get('/column/me', {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`,
     },
   });
 }
 
 function allColumn() {
-  return axios.get('http://localhost:5000/board/all', {
+  return Axios.get('/board/all', {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`,
     },
   });
 }
 
 function specificBoard(specific) {
-  return axios.get(`http://localhost:5000/board/${specific}`, {
+  return Axios.get(`/board/${specific}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('jwt')}`,
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`,
     },
   });
 }
 
 function specificColumn(specific) {
-  return axios.get(
-    `http://localhost:5000/board/${specific.name}/column/${specific.column_id}`,
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
-      },
+  return Axios.get(`/board/${specific.name}/column/${specific.column_id}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`,
     },
-  );
+  });
 }
 
-export { writeColumn, myColumn, allColumn, specificColumn, specificBoard };
+function clickLike(id) {
+  return Axios.post(`/column/${id}/like`, null, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+    },
+  });
+}
+
+export {
+  writeColumn,
+  myColumn,
+  allColumn,
+  specificColumn,
+  specificBoard,
+  clickLike,
+};

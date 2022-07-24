@@ -2,7 +2,7 @@ from flask_classful import FlaskView, route
 from flask_apispec import doc, marshal_with, use_kwargs
 from flask_cors import cross_origin
 from flask import request
-from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
+from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token, create_refresh_token
 
 import datetime
 
@@ -22,11 +22,12 @@ class User(FlaskView):
     @jwt_required()
     def index(self, name=None, password=None, email=None):
         if request.method in ["GET"]:
+            print(get_jwt_identity())
             user_model = UserModel.objects.filter(email=get_jwt_identity()).only("email", "name").first()
             return user_model.to_json(), 200
 
         user_service = UserService(name=name, password=password, email=email)
-        print(request.method)
+
         if request.method in ["PUT"]:
             if user_service.edit():
                 return "EDIT SUCCESSFUL", 201
@@ -45,12 +46,24 @@ class User(FlaskView):
         UserService(name=kwargs.get("name"),email=kwargs.get("email"), password=kwargs.get("password")).sign_up()
         return "SUCCESS", 201
 
+    @doc(description="User 리프레시 토큰 발급", summary="User 리프레시")
+    @route("/refresh", methods=["GET"])
+    @cross_origin()
+    @jwt_required(refresh=True)
+    def refresh(self):
+        user = get_jwt_identity()
+        access_token = create_access_token(identity=user)
+        return access_token, 201
+
     @doc(description="User 로그인", summary="User 로그인")
     @route("/login", methods=["POST"])
     @use_kwargs(UserSchema(only=("email", "password"), partial=True), locations=("json",))
     @cross_origin()
     @check_password
     def login(self, email, password):
-        return create_access_token(identity=email, expires_delta=datetime.timedelta(hours=24)), 201
+        return {
+                "access_token" : create_access_token(identity=email, expires_delta=datetime.timedelta(hours=1)),
+                "refresh_token" : create_refresh_token(identity=email, expires_delta=datetime.timedelta(weeks=2))
+               }, 201
 
 

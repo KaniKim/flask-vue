@@ -10,6 +10,7 @@
   "dependencies": {
     "@mdi/font": "5.9.55",
     "axios": "^0.26.1",
+    "buffer": "^6.0.3",
     "core-js": "^3.8.3",
     "js-cookie": "^3.0.1",
     "qs": "^6.10.3",
