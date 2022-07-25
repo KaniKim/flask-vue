@@ -22,7 +22,6 @@ class User(FlaskView):
     @jwt_required()
     def index(self, name=None, password=None, email=None):
         if request.method in ["GET"]:
-            print(get_jwt_identity())
             user_model = UserModel.objects.filter(email=get_jwt_identity()).only("email", "name").first()
             return user_model.to_json(), 200
 
@@ -47,12 +46,12 @@ class User(FlaskView):
         return "SUCCESS", 201
 
     @doc(description="User 리프레시 토큰 발급", summary="User 리프레시")
-    @route("/refresh", methods=["GET"])
+    @route("/refresh", methods=["POST"])
     @cross_origin()
     @jwt_required(refresh=True)
     def refresh(self):
         user = get_jwt_identity()
-        access_token = create_access_token(identity=user)
+        access_token = create_access_token(identity=user, expires_delta=datetime.timedelta(hours=1))
         return access_token, 201
 
     @doc(description="User 로그인", summary="User 로그인")
@@ -61,8 +60,9 @@ class User(FlaskView):
     @cross_origin()
     @check_password
     def login(self, email, password):
+
         return {
-                "access_token" : create_access_token(identity=email, expires_delta=datetime.timedelta(hours=1)),
+                "access_token" : create_access_token(identity=email, expires_delta=datetime.timedelta(minutes=1)),
                 "refresh_token" : create_refresh_token(identity=email, expires_delta=datetime.timedelta(weeks=2))
                }, 201
 

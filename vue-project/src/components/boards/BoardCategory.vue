@@ -11,7 +11,7 @@
       title="Closable Alert"
       :key="componentKey"
     >
-      At {{ name }}, there is not existed columns. Lets write some columns.
+      At Here, there is not existed columns. Lets write some columns.
     </v-alert>
     <br />
     <v-row justify="center" align="center">
@@ -87,7 +87,6 @@ export default {
         'Nichijou',
         'ETC',
       ],
-      name: '',
     };
   },
   methods: {
@@ -119,13 +118,11 @@ export default {
             res.data.columns.forEach((data, index, array) => {
               this.board_columns.push(data);
             });
-            this.name = board_name;
           })
           // eslint-disable-next-line no-unused-vars
           .catch(err => {
-            this.board_columns = [];
             this.alert = true;
-            this.name = board_name;
+            this.board_columns = [];
           });
         this.forceRerender();
       }

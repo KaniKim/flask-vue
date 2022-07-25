@@ -17,6 +17,18 @@ class ColumnBoardSchema(Schema):
     tags = fields.List(fields.Str())
     name = fields.Str()
 
+class NextCommentSchema(Schema):
+    content = fields.Str()
+    author = fields.Str()
+
+class CommentSchema(Schema):
+    content = fields.Str()
+    author = fields.Str()
+    next_comment = fields.List(fields.Nested(NextCommentSchema()))
+
+class ListCommentSchema(Schema):
+    comments = fields.List(fields.Nested(CommentSchema()))
+
 class ColumnAllSchema(Schema):
     columns = fields.List(fields.Nested(ColumnSchema()))
 

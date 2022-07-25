@@ -7,9 +7,10 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 import json
 from bson import ObjectId
 
-from app.model.column import ColumnModel, BoardModel, TagModel
+from app.model.column import ColumnModel, BoardModel, TagModel, CommentModel
 from app.model.user import UserModel
-from app.schema.column import ColumnSchema, ColumnBoardSchema, BoardSchema, ColumnAllSchema, LikeSchema
+from app.schema.column import ColumnSchema, ColumnBoardSchema, BoardSchema, ColumnAllSchema, LikeSchema, CommentSchema, \
+    NextCommentSchema, ListCommentSchema
 from app.services.auth import check_password
 from app.services.column import ColumnService
 
@@ -51,7 +52,73 @@ class ColumnView(FlaskView):
             return column.like, 201
         return None, 404
 
+    @doc(description="Column 댓글 조회", summary="Column 댓글 조회")
+    @route("/<column_id>/comment", methods=["GET"])
+    @cross_origin()
+    @jwt_required()
+    @marshal_with(CommentSchema(only=("content",), partial=True), 201)
+    @marshal_with(ListCommentSchema(), 200)
+    def get_comment_column(self, column_id):
+        column = ColumnModel.objects(id=ObjectId(column_id)).first()
 
+        if not column:
+            return "No column", 404
+
+        comments = [CommentModel.objects.filter(id=comment.id).first() for comment in column.comments]
+        next_comments = {"comments": [
+                            {
+                                "content": comment.content,
+                                "author": UserModel.objects.filter(email=get_jwt_identity()).first().name,
+                                "next_comment":
+                                    [json.loads(CommentModel.objects.filter(next_comment.id).first().to_json()) for next_comment in comment.next_comment]
+                             }
+                            for comment in comments]
+                        }
+
+        return next_comments, 200
+
+    @doc(description="Column 댓글 추가", summary="Column 댓글 추가 ")
+    @route("/<column_id>/comment", methods=["POST"])
+    @cross_origin()
+    @jwt_required()
+    @use_kwargs(CommentSchema(only=("content",), partial=True), locations=("json",))
+    @marshal_with(CommentSchema(only=("content",), partial=True), 201)
+    @marshal_with(ListCommentSchema(), 200)
+    def post_comment_column(self, column_id, content):
+        column = ColumnModel.objects(id=ObjectId(column_id)).first()
+
+        if not column:
+            return "No column", 404
+
+        user = UserModel.objects.filter(email=get_jwt_identity()).first()
+        if column.comments:
+            comment = CommentModel(content=content, author=user, next_comment=[]).save()
+            column.comments.append(comment)
+        else:
+            column.comments = [CommentModel(content=content, author=user, next_comment=[]).save()]
+        column.save()
+        return content, 201
+
+
+class CommentView(FlaskView):
+    @doc(description="Column 대댓글 추가", summary="Column 대댓글 추가")
+    @route("/comment/<comment_id>/next", methods=["POST"])
+    @cross_origin()
+    @jwt_required()
+    @use_kwargs(NextCommentSchema(only=("content",), partial=True), locations=("json",))
+    @marshal_with(NextCommentSchema(only=("content",), partial=True), 201)
+    def comment_column(self, comment_id, content):
+        comment = CommentModel.objects.filter(id=ObjectId(comment_id))
+        if comment:
+            user = UserModel.objects.filter(email=get_jwt_identity()).first()
+            if comment.next_comment:
+                comment = CommentModel(content=content, author=user).save()
+                comment.next_comment.append(comment)
+            else:
+                comment.next_comment = [CommentModel(content=content, author=user).save()]
+            comment.save()
+            return content, 201
+        return None, 404
 
 class BoardView(FlaskView):
     @route('/all', methods=["GET"])
@@ -75,8 +142,8 @@ class BoardView(FlaskView):
         board = BoardModel.objects.filter(name=board_name).first()
         if board is None:
             return "There is no COLUMN", 404
-        board_columns = [json.loads(ColumnModel.objects.filter(id=column.id).first().to_json()) for column in board.columns]
-        return {"name": board.name, "columns": board_columns}, 200
+        board_columns = [{"column":json.loads(ColumnModel.objects.filter(id=column.id).first().to_json()), "name": board.name} for column in board.columns]
+        return {"columns": board_columns}, 200
 
     @route('/<board_name>/column/<column_id>', methods=["GET"])
     @doc(description="특정 Board의 게시글 조회", summary="게시글 조회")

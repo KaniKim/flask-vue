@@ -7,7 +7,6 @@ class TagModel(Document):
 
 
 class CommentModel(Document):
-    title = StringField(max_length=255, required=True)
     content = StringField(max_length=255, required=True)
     like = IntField(default=0)
     author = ReferenceField(UserModel)

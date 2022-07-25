@@ -21,14 +21,28 @@
             >{{ like }} <v-icon end icon="mdi-checkbox-marked-circle"> </v-icon>
           </v-btn>
           <v-divider inset></v-divider>
-          <v-col cols="4">
+          <v-col cols="12">
             <h1>Comment</h1>
+            <v-text-field
+              v-model="comment_content"
+              filled
+              color="deep-purple"
+              label="comment"
+              @keydown.enter="postComment"
+            ></v-text-field>
             <v-list v-for="comment in comments" :key="comment.key">
-              <v-list-item-title>{{ comment.content }}</v-list-item-title>
-              <div v-for="recomment in comment.recomments" :key="recomment.key">
-                <v-list-item-subtitle>{{
-                  recomment.recontent
-                }}</v-list-item-subtitle>
+              <v-list-item-title
+                >{{ comment.content }} - {{ comment.author }}
+                <v-btn
+                  class="ma-2"
+                  variant="text"
+                  color="blue-lighten-2"
+                  @click="addComment"
+                  ><v-icon end icon="mdi-checkbox-marked-circle">
+                  </v-icon> </v-btn
+              ></v-list-item-title>
+              <div v-for="next in comment.next_comment" :key="next.key">
+                <v-list-item-subtitle>{{ next.content }}</v-list-item-subtitle>
               </div>
             </v-list>
           </v-col>
@@ -39,32 +53,44 @@
 </template>
 <script>
 import { clickLike, specificColumn } from '@/api/column';
+import { getComment, postComment } from '@/api/comment';
 
 export default {
   data: () => ({
     id: '',
     title: '',
-    content: '',
+    comment_content: '',
     tags: [],
     author: '',
     name: '',
+    content: '',
     like: 0,
     column_id: '',
-    comments: [
-      {
-        content: 'hello',
-        recomments: [
-          {
-            recontent: 'hello too',
-          },
-          {
-            recontent: 'hello too',
-          },
-        ],
-      },
-    ],
+    comment: '',
+    comments: null,
   }),
   methods: {
+    addComment() {},
+    postComment() {
+      const data = {
+        content: this.comment_content,
+        column_id: this.$route.params.id,
+      };
+      postComment(data)
+        // eslint-disable-next-line no-unused-vars
+        .then(res => {
+          getComment(this.$route.params.id)
+            .then(res => {
+              this.comments = res.data.comments;
+            })
+            .catch(err => {
+              alert(err);
+            });
+        })
+        .catch(err => {
+          alert(err);
+        });
+    },
     addLike() {
       clickLike(this.$route.params.id)
         .then(() => {
@@ -80,6 +106,13 @@ export default {
       name: this.$route.params.name,
       column_id: this.$route.params.id,
     };
+    getComment(this.$route.params.id)
+      .then(res => {
+        this.comments = res.data.comments;
+      })
+      .catch(err => {
+        alert(err);
+      });
     specificColumn(specific)
       .then(res => {
         this.id = res.data.id;
