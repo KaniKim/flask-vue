@@ -37,13 +37,29 @@
                   class="ma-2"
                   variant="text"
                   color="blue-lighten-2"
-                  @click="addComment"
+                  v-on:click="comment_id = comment.id"
+                  @click="check_next = !check_next"
                   ><v-icon end icon="mdi-checkbox-marked-circle">
                   </v-icon> </v-btn
               ></v-list-item-title>
               <div v-for="next in comment.next_comment" :key="next.key">
-                <v-list-item-subtitle>{{ next.content }}</v-list-item-subtitle>
+                <v-list-item-subtitle>
+                  {{ next.content }} - {{ next.author }}</v-list-item-subtitle
+                >
               </div>
+              <v-dialog v-model="check_next">
+                <v-card>
+                  <v-col cols="8">
+                    <v-textarea v-model="next_comment" rows="1"></v-textarea>
+                    <v-btn
+                      @click="nextComment(comment_id, next_comment)"
+                      v-on:click="check_next = !check_next"
+                    >
+                      comment
+                    </v-btn>
+                  </v-col>
+                </v-card>
+              </v-dialog>
             </v-list>
           </v-col>
         </v-card>
@@ -53,7 +69,7 @@
 </template>
 <script>
 import { clickLike, specificColumn } from '@/api/column';
-import { getComment, postComment } from '@/api/comment';
+import { getComment, postComment, postNextComment } from '@/api/comment';
 
 export default {
   data: () => ({
@@ -68,9 +84,31 @@ export default {
     column_id: '',
     comment: '',
     comments: null,
+    comment_id: '',
+    check_next: false,
+    next_comment: '',
   }),
   methods: {
-    addComment() {},
+    nextComment(moto_id, content) {
+      const data = {
+        comment_id: moto_id,
+        content: content,
+      };
+      postNextComment(data)
+        // eslint-disable-next-line no-unused-vars
+        .then(res => {
+          getComment(this.$route.params.id)
+            .then(res => {
+              this.comments = res.data.comments;
+            })
+            .catch(err => {
+              alert(err);
+            });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     postComment() {
       const data = {
         content: this.comment_content,
@@ -108,6 +146,7 @@ export default {
     };
     getComment(this.$route.params.id)
       .then(res => {
+        console.log(res.data.comments);
         this.comments = res.data.comments;
       })
       .catch(err => {

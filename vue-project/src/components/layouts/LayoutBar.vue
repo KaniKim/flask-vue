@@ -27,6 +27,9 @@
           :to="item.to"
           >{{ item.title }}</v-list-item
         >
+        <v-list-item v-if="isLogin" @click="logoutUser" :to="'/login'">
+          Logout
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
   </div>
@@ -78,6 +81,10 @@ export default {
     };
   },
   methods: {
+    logoutUser() {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+    },
     forceRerender() {
       this.componentKey += 1;
       this.drawer = !this.drawer;

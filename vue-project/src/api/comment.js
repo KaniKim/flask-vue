@@ -20,4 +20,16 @@ function postComment(data) {
   );
 }
 
-export { getComment, postComment };
+function postNextComment(data) {
+  return Axios.post(
+    `/comment/${data.comment_id}/next`,
+    { content: data.content },
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+      },
+    },
+  );
+}
+
+export { getComment, postComment, postNextComment };

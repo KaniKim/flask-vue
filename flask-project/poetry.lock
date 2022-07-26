@@ -8,6 +8,7 @@ python-versions = ">=3.6"
 
 [package.dependencies]
 prance = {version = ">=0.11", extras = ["osv"], optional = true, markers = "extra == \"validation\""}
+PyYAML = {version = ">=3.10", optional = true, markers = "extra == \"yaml\""}
 
 [package.extras]
 dev = ["PyYAML (>=3.10)", "prance[osv] (>=0.11)", "marshmallow (>=3.13.0)", "pytest", "mock", "flake8 (==3.9.2)", "flake8-bugbear (==21.9.1)", "pre-commit (>=2.4,<3.0)", "tox"]
@@ -17,6 +18,22 @@ marshmallow = ["marshmallow (>=3.13.0)"]
 tests = ["PyYAML (>=3.10)", "prance[osv] (>=0.11)", "marshmallow (>=3.13.0)", "pytest", "mock"]
 validation = ["prance[osv] (>=0.11)"]
 yaml = ["PyYAML (>=3.10)"]
+
+[[package]]
+name = "apispec-webframeworks"
+version = "0.5.2"
+description = "Web framework plugins for apispec."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+apispec = {version = ">=2.0.0", extras = ["yaml"]}
+
+[package.extras]
+tests = ["bottle (==0.12.17)", "tornado", "Flask (==1.1.1)", "mock", "pytest"]
+lint = ["pre-commit (>=1.18,<2.0)", "flake8-bugbear (==19.8.0)", "flake8 (==3.7.9)"]
+dev = ["tox", "pre-commit (>=1.18,<2.0)", "flake8-bugbear (==19.8.0)", "flake8 (==3.7.9)", "bottle (==0.12.17)", "tornado", "Flask (==1.1.1)", "mock", "pytest"]
 
 [[package]]
 name = "appnope"
@@ -331,6 +348,17 @@ mongoengine = ">=0.20"
 WTForms = {version = ">=2.3.1", extras = ["email"]}
 
 [[package]]
+name = "flask-swagger-ui"
+version = "4.11.1"
+description = "Swagger UI blueprint for Flask"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+flask = "*"
+
+[[package]]
 name = "flask-wtf"
 version = "1.0.1"
 description = "Form rendering, validation, and CSRF protection for Flask with WTForms."
@@ -345,6 +373,14 @@ WTForms = "*"
 
 [package.extras]
 email = ["email-validator"]
+
+[[package]]
+name = "funcy"
+version = "1.17"
+description = "A fancy and practical functional tools"
+category = "main"
+optional = false
+python-versions = "*"
 
 [[package]]
 name = "idna"
@@ -1022,10 +1058,11 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "3.8.13"
-content-hash = "9f549b1c86e940cbee6c97b7185eac5957f615a822252b3e12b5625705377f4d"
+content-hash = "7ecb90375527ccf084fde9e00581e3c60046c6d108726e1025afa49a6770373d"
 
 [metadata.files]
 apispec = []
+apispec-webframeworks = []
 appnope = []
 astroid = []
 asttokens = []
@@ -1051,7 +1088,9 @@ flask-cors = []
 flask-jwt-extended = []
 flask-marshmallow = []
 flask-mongoengine = []
+flask-swagger-ui = []
 flask-wtf = []
+funcy = []
 idna = []
 importlib-metadata = []
 importlib-resources = []

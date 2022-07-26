@@ -1,5 +1,5 @@
 from flask_classful import FlaskView, route
-from flask_apispec import doc, marshal_with, use_kwargs
+from flask_apispec import doc, marshal_with, use_kwargs, MethodResource
 from flask_cors import cross_origin
 from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token, create_refresh_token
@@ -11,11 +11,11 @@ from app.schema.user import UserSchema
 from app.services.auth import check_password
 from app.services.user import UserService
 
-class User(FlaskView):
+class User(FlaskView, MethodResource):
     @route("/me", methods=["GET", "PUT", "DELETE"])
     @doc(description="User 정보 조회, 수정, 삭제", summary="User 정보")
     @marshal_with(UserSchema(exclude=["_id", "password"]), code=200)
-    @use_kwargs(UserSchema(only=("name", "email", "password"), partial=True), locations=("json", ))
+    @use_kwargs(UserSchema(only=("name", "email", "password"), partial=True), location=("json", ))
     @marshal_with(None, code=204)
     @cross_origin()
     @check_password
@@ -40,7 +40,7 @@ class User(FlaskView):
     @doc(description="User 회원가입", summary="User 회원가입")
     @route("/sign-up", methods=["POST"])
     @cross_origin()
-    @use_kwargs(UserSchema(only=("name", "email", "password"), partial=True), locations=("json", ))
+    @use_kwargs(UserSchema(only=("name", "email", "password"), partial=True), location=("json", ))
     def sign_up(self, **kwargs):
         UserService(name=kwargs.get("name"),email=kwargs.get("email"), password=kwargs.get("password")).sign_up()
         return "SUCCESS", 201
@@ -56,7 +56,7 @@ class User(FlaskView):
 
     @doc(description="User 로그인", summary="User 로그인")
     @route("/login", methods=["POST"])
-    @use_kwargs(UserSchema(only=("email", "password"), partial=True), locations=("json",))
+    @use_kwargs(UserSchema(only=("email", "password"), partial=True), location=("json",))
     @cross_origin()
     @check_password
     def login(self, email, password):

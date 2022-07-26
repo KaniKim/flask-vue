@@ -22,6 +22,7 @@ class NextCommentSchema(Schema):
     author = fields.Str()
 
 class CommentSchema(Schema):
+    id = fields.Str()
     content = fields.Str()
     author = fields.Str()
     next_comment = fields.List(fields.Nested(NextCommentSchema()))
