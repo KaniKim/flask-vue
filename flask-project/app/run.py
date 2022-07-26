@@ -7,7 +7,7 @@ from flask_jwt_extended import JWTManager
 from mongoengine import connect
 
 from app.api.column_api import ColumnView, BoardView, CommentView
-from app.api.user_api import User
+from app.api.user_api import UserView
 from app import register_api
 
 app = Flask(__name__)
@@ -44,7 +44,7 @@ CORS(app,
 )
 jwt = JWTManager(app)
 
-User.register(app, route_base="/user",  trailing_slash=False)
+UserView.register(app, route_base="/user",  trailing_slash=False)
 ColumnView.register(app, route_base="/column", trailing_slash=False)
 BoardView.register(app, route_base='/board', trailing_slash=False)
 CommentView.register(app, route_base='/comment', trailing_slash=False)

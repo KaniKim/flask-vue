@@ -32,7 +32,7 @@ class ColumnView(FlaskView):
     @route("/", methods=["POST"])
     @cross_origin()
     @jwt_required()
-    @use_kwargs(ColumnBoardSchema(), location=("json",))
+    @use_kwargs(ColumnBoardSchema(), location="json")
     @marshal_with(None, apply=False,code=201)
     def write_column(self, content, title, tags, name):
         if ColumnService(title=title, content=content, tags=tags, email=get_jwt_identity(), name=name).save_column():
@@ -70,7 +70,7 @@ class ColumnView(FlaskView):
                             {
                                 "id": str(comment.id),
                                 "content": comment.content,
-                                "author": UserModel.objects.filter(email=get_jwt_identity()).first().name,
+                                "author": UserModel.objects.filter(id=ObjectId(comment.author.id)).first().name,
                                 "next_comment":
                                     [
                                         {
@@ -89,7 +89,7 @@ class ColumnView(FlaskView):
     @route("/<column_id>/comment", methods=["POST"])
     @cross_origin()
     @jwt_required()
-    @use_kwargs(CommentSchema(only=("content",), partial=True), location=("json",))
+    @use_kwargs(CommentSchema(only=("content",), partial=True), location="json")
     @marshal_with(CommentSchema(only=("content",), partial=True), 201)
     @marshal_with(ListCommentSchema(), 200)
     def post_comment_column(self, column_id, content):
@@ -113,7 +113,7 @@ class CommentView(FlaskView):
     @route("/<comment_id>/next", methods=["POST"])
     @cross_origin()
     @jwt_required()
-    @use_kwargs(NextCommentSchema(only=("content",), partial=True), location=("json",))
+    @use_kwargs(NextCommentSchema(only=("content",), partial=True), location="json")
     @marshal_with(NextCommentSchema(only=("content",), partial=True), 201)
     def comment_column(self, comment_id, content):
         comment = CommentModel.objects.filter(id=ObjectId(comment_id)).first()
@@ -142,7 +142,7 @@ class BoardView(FlaskView):
     @route('/<board_name>', methods=["GET"])
     @doc(description="특정 Board의 게시글들 조회", summary="게시글들 조회")
     @marshal_with(BoardSchema(), 200)
-    @use_kwargs(BoardSchema(only=("name",), partial=True), location=("json",))
+    @use_kwargs(BoardSchema(only=("name",), partial=True), location="json")
     @marshal_with(None, 404)
     @cross_origin()
     @jwt_required()

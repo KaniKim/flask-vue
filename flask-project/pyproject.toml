@@ -25,6 +25,8 @@ bcrypt = "^3.2.2"
 apispec-webframeworks = "^0.5.2"
 funcy = "^1.17"
 flask-swagger-ui = "^4.11.1"
+pytest-factoryboy = "^2.5.0"
+arrow = "^1.2.2"
 
 [tool.poetry.dev-dependencies]
 
