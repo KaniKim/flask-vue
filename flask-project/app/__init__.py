@@ -1,11 +1,11 @@
-from app.api.user_api import User
+from app.api.user_api import UserView
 from app.api.column_api import CommentView, ColumnView, BoardView
 from flask import Blueprint, jsonify
 from flask_swagger_ui import get_swaggerui_blueprint
 
 api = Blueprint("api", __name__)
 def register_api(app):
-    User.register(api, route_base="/user", trailing_slash=False)
+    UserView.register(api, route_base="/user", trailing_slash=False)
     BoardView.register(api, route_base="/board", trailing_slash=False)
     ColumnView.register(api, route_base="/column", trailing_slash=False)
     CommentView.register(api, route_base="/comment", trailing_slash=False)
