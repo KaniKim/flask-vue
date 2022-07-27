@@ -16,6 +16,9 @@ def check_password(f):
 
         user_model = UserModel.objects(email=email).first()
 
+        if user_model is None:
+            return "User Email or Password is Wrong", 404
+
         if user_model.deleted_at is not None and user_model.deleted_at < datetime.datetime.now():
             raise UserIsDeleted("User is Deleted", 404)
 
@@ -23,6 +26,6 @@ def check_password(f):
             if bcrypt.checkpw(password.encode("utf-8"), user_model.password.encode("utf-8")):
                 return f(self, **kwargs)
             else:
-                raise UserPasswordNotCorrectError("wrong password", 409)
+                return "wrong password", 409
         return f(self, **kwargs)
     return decorated_func

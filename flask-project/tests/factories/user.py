@@ -11,6 +11,6 @@ class UserFactory(MongoEngineFactory):
     class Meta:
         model = UserModel
 
-    name = factory.Faker("name")
+    name = Faker().name()
     email = Faker().company_email()
     password = factory.LazyAttribute(lambda obj: obj.password)

@@ -1,3 +1,5 @@
+import json
+
 from flask_classful import FlaskView, route
 from flask_apispec import doc, marshal_with, use_kwargs, MethodResource
 from flask_cors import cross_origin
@@ -21,21 +23,22 @@ class UserView(FlaskView, MethodResource):
     @check_password
     @jwt_required()
     def index(self, name=None, password=None, email=None):
-        if request.method in ["GET"]:
-            user_model = UserModel.objects.filter(email=get_jwt_identity()).only("email", "name").first()
-            return user_model.to_json(), 200
+        if name is None and password is None and email is None:
+            if request.method in ["GET"]:
+                user_model = UserModel.objects.filter(email=get_jwt_identity()).only("email", "name").first()
+                return json.loads(user_model.to_json()), 200
+        else:
+            user_service = UserService(name=name, password=password, email=email)
 
-        user_service = UserService(name=name, password=password, email=email)
+            if request.method in ["PUT"]:
+                if user_service.edit():
+                    return "EDIT SUCCESSFUL", 201
+                return "EDIT FAIL", 404
 
-        if request.method in ["PUT"]:
-            if user_service.edit():
-                return "EDIT SUCCESSFUL", 201
-            return "EDIT FAIL", 404
-
-        if request.method in ["DELETE"]:
-            if user_service.delete():
-                return "DELETE SUCCESSFUL", 204
-            return "DELETE FAIL", 404
+            if request.method in ["DELETE"]:
+                if user_service.delete():
+                    return "DELETE SUCCESSFUL", 204
+                return "DELETE FAIL", 404
 
     @doc(description="User 회원가입", summary="User 회원가입")
     @route("/sign-up", methods=["POST"])
