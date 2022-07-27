@@ -7,6 +7,7 @@ from app.model.user import UserModel
 
 Faker.seed(str(datetime.datetime.now()))
 
+
 class UserFactory(MongoEngineFactory):
     class Meta:
         model = UserModel

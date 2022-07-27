@@ -7,6 +7,7 @@ from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from typing import Optional
 
+
 class ApiDocConverter(Converter):
     def get_operation(self, rule, view, parent=None):
         from flask_apispec.utils import resolve_annotations, merge_recursive
@@ -28,9 +29,11 @@ class ApiDocConverter(Converter):
 
         for status_code in response:
             result = {}
-            result['description'] = response[status_code]['description']
-            result['content'] = {}
-            result['content']['application/json'] = {'schema': response[status_code]['schema']}
+            result["description"] = response[status_code]["description"]
+            result["content"] = {}
+            result["content"]["application/json"] = {
+                "schema": response[status_code]["schema"]
+            }
             response[status_code] = result
         return response
 
@@ -42,10 +45,9 @@ class ApiDocConverter(Converter):
         schema, options, location = self._parse_args_annotation(view, parent)
         converter = self._resolve_converter(schema)
 
-
         if schema is None:
             return None
-        if location != None and location != 'body':
+        if location != None and location != "body":
             return None
         options["location"] = "body"
         params = converter(schema, **options)
@@ -88,13 +90,17 @@ class ApiDocConverter(Converter):
 
         return openapi.fields2jsonschema
 
+
 def _get_bp_name(endpoint: str) -> Optional[str]:
     splitted = endpoint.split(".")
     if len(splitted) > 1:
         return splitted[0]
     return None
 
-def generate_api_spec(title=None, version=None, bp_name=None, global_params=None) -> dict:
+
+def generate_api_spec(
+    title=None, version=None, bp_name=None, global_params=None
+) -> dict:
     from flask_apispec.paths import rule_to_path
 
     spec = APISpec(
@@ -116,7 +122,13 @@ def generate_api_spec(title=None, version=None, bp_name=None, global_params=None
             spec.path(
                 view=view_func,
                 path=rule_to_path(rule),
-                operations={method.lower(): converter.get_operation(rule, view_func, converter.get_parent(view_func)) for method in rule.methods if method not in ["OPTIONS", "HEAD"]},
+                operations={
+                    method.lower(): converter.get_operation(
+                        rule, view_func, converter.get_parent(view_func)
+                    )
+                    for method in rule.methods
+                    if method not in ["OPTIONS", "HEAD"]
+                },
                 parameters=global_params,
             )
     return spec.to_dict()

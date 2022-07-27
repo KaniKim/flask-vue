@@ -1,6 +1,7 @@
 import datetime
 from mongoengine import Document, StringField, BooleanField, DateTimeField
 
+
 class UserModel(Document):
     name = StringField(max_length=255, required=True)
     email = StringField(max_length=255, required=True)

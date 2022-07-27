@@ -1,4 +1,11 @@
-from mongoengine import Document, StringField, IntField, ReferenceField, ListField, LazyReferenceField
+from mongoengine import (
+    Document,
+    StringField,
+    IntField,
+    ReferenceField,
+    ListField,
+    LazyReferenceField,
+)
 from app.model.user import UserModel
 
 

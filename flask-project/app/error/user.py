@@ -6,6 +6,7 @@ class UserAlreadyExistError(Exception):
     def __str__(self):
         return self.message
 
+
 class UserIsDeleted(Exception):
     def __init__(self, message: str, code: int):
         self.message = message
@@ -13,6 +14,7 @@ class UserIsDeleted(Exception):
 
     def __str__(self):
         return self.message
+
 
 class UserPasswordNotCorrectError(Exception):
     def __init__(self, message: str, code: int):

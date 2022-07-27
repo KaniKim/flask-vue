@@ -4,8 +4,11 @@ from typing import Optional
 
 from app.model.user import UserModel
 
+
 class UserService:
-    def __init__(self, email: Optional[str], password: Optional[str], name: Optional[str]):
+    def __init__(
+        self, email: Optional[str], password: Optional[str], name: Optional[str]
+    ):
         self.email = email
         self.password = password
         self.name = name
@@ -17,10 +20,10 @@ class UserService:
 
         hashed_password = bcrypt.hashpw(self.password.encode("utf-8"), bcrypt.gensalt())
         user_model = UserModel(
-            name = self.name,
-            password = hashed_password.decode("utf-8"),
-            email = self.email,
-            activated = False
+            name=self.name,
+            password=hashed_password.decode("utf-8"),
+            email=self.email,
+            activated=False,
         )
         user_model.save()
         return "SUCCESS", 201
@@ -37,4 +40,3 @@ class UserService:
             user.save()
             return True
         return False
-
