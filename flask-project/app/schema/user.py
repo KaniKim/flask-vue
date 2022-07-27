@@ -1,6 +1,5 @@
 from marshmallow import fields, Schema
 
-
 class UserLoginSchema(Schema):
     jwt = fields.Str()
 
@@ -13,8 +12,5 @@ class UserSchema(Schema):
     _id = fields.Str()
     name = fields.Str(required=True)
     email = fields.Email(required=True)
-    password = fields.Str(load_only=True, required=True)
+    password = fields.Str(required=True)
     activated = fields.Bool()
-
-    class Meta:
-        fields = ("_id", "name", "email", "password", "activated",)

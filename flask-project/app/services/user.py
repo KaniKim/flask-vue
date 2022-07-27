@@ -3,8 +3,6 @@ import datetime
 from typing import Optional
 
 from app.model.user import UserModel
-from app.error.user import UserAlreadyExistError
-
 
 class UserService:
     def __init__(self, email: Optional[str], password: Optional[str], name: Optional[str]):
@@ -13,8 +11,9 @@ class UserService:
         self.name = name
 
     def sign_up(self):
-        if UserModel.objects.filter(email=self.email):
-            raise UserAlreadyExistError("User is Already Existed", 409)
+        print(self.email)
+        if UserModel.objects(email=self.email):
+            return "USER IS ALREADY EXISTED", 409
 
         hashed_password = bcrypt.hashpw(self.password.encode("utf-8"), bcrypt.gensalt())
         user_model = UserModel(
@@ -24,6 +23,7 @@ class UserService:
             activated = False
         )
         user_model.save()
+        return "SUCCESS", 201
 
     def edit(self):
         return UserModel.objects(email=self.email).update(name=self.name)

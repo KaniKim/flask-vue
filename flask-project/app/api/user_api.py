@@ -7,7 +7,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_tok
 import datetime
 
 from app.model.user import UserModel
-from app.schema.user import UserSchema
+from app.schema.user import UserSchema, UserSignUpSchema
 from app.services.auth import check_password
 from app.services.user import UserService
 
@@ -40,10 +40,9 @@ class UserView(FlaskView, MethodResource):
     @doc(description="User 회원가입", summary="User 회원가입")
     @route("/sign-up", methods=["POST"])
     @cross_origin()
-    @use_kwargs(UserSchema(only=("name", "email", "password"), partial=True), location="json")
-    def sign_up(self, **kwargs):
-        UserService(name=kwargs.get("name"),email=kwargs.get("email"), password=kwargs.get("password")).sign_up()
-        return "SUCCESS", 201
+    @use_kwargs(UserSignUpSchema(), location="json")
+    def sign_up(self, email, password, name):
+        return UserService(name=name, email=email, password=password).sign_up()
 
     @doc(description="User 리프레시 토큰 발급", summary="User 리프레시")
     @route("/refresh", methods=["POST"])
