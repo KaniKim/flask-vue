@@ -1,7 +1,18 @@
-FROM node:lts-alpine
+FROM node:lts-alpine as builder
 WORKDIR /vue-project
 ADD ./package.json ./
 RUN npm install
 
-COPY ./ /vue-project/
-CMD [ "npm", "run", "serve" ]
+COPY . .
+RUN npm run build
+
+FROM nginx:stable-alpine
+
+RUN rm -rf /etc/nginx/conf.d/defualt.conf
+COPY --from=builder /vue-project/nginx/default.conf /etc/nginx/conf.d/default/conf
+
+RUN rm -rf /usr/share/nginx/html/*
+COPY --from=builder /vue-project/dist  /usr/share/nginx/html
+
+EXPOSE 80
+ENTRYPOINT ["nginx", "-g", "daemon off;"]

@@ -105,9 +105,7 @@ export default {
               alert(err);
             });
         })
-        .catch(err => {
-          console.log(err);
-        });
+        .catch(() => {});
     },
     postComment() {
       const data = {
@@ -146,7 +144,6 @@ export default {
     };
     getComment(this.$route.params.id)
       .then(res => {
-        console.log(res.data.comments);
         this.comments = res.data.comments;
       })
       .catch(err => {

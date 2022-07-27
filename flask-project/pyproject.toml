@@ -27,6 +27,7 @@ funcy = "^1.17"
 flask-swagger-ui = "^4.11.1"
 pytest-factoryboy = "^2.5.0"
 arrow = "^1.2.2"
+uWSGI = "^2.0.20"
 
 [tool.poetry.dev-dependencies]
 

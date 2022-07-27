@@ -1,9 +1,9 @@
-FROM python:3.10.1
+FROM python:3.8.13
 
 ENV PYTHONDONTWRITEVYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-WORKDIR /flask-project
+WORKDIR /
 
 RUN pip install -U pip \
     && apt-get update \
@@ -11,16 +11,14 @@ RUN pip install -U pip \
     && curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
 ENV PATH="${PATH}:/root/.poetry/bin"
 
-COPY poetry.lock /flask-project/poetry.lock
-COPY pyproject.toml /flask-project/pyproject.toml
-COPY app/config.py /flask-project/Config.py
-COPY ./ /flask-project/
+COPY poetry.lock /poetry.lock
+COPY pyproject.toml /pyproject.toml
+COPY uwsgi.ini /uwsgi.ini
+COPY ./ /
 
 RUN poetry install
 
-ENV FLASK_APP="app.py"
-ENV FLASK_DEBUG=1
 ENV SSL_DISABLE=1
 
-CMD ["poetry", "run", "flask", "run", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["poetry", "run", "uwsgi", "./uwsgi.ini"]
 

@@ -28,13 +28,15 @@ export default {
     user_name: '',
   }),
   created() {
-    checkUser()
-      .then(res => {
-        this.user_name = res.data['name'];
-      })
-      .catch(err => {
-        alert(err);
-      });
+    if (localStorage.getItem('access_token')) {
+      checkUser()
+        .then(res => {
+          this.user_name = res.data['name'];
+        })
+        .catch(err => {
+          alert(err);
+        });
+    }
   },
 };
 </script>

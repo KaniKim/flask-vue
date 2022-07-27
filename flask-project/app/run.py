@@ -27,7 +27,7 @@ app.config.update({
 })
 
 
-connect("test", username="kani", password="123456", host="mongodb://kani:123456@127.0.01:27017/test?authSource=admin", port=27017)
+connect("test", username="kani", password="123456", host="mongodb://mongodb:27017", port=27017, connect=False)
 CORS(app,
     intercept_exceptions=False,
      supports_credentials=True,

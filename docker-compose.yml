@@ -8,19 +8,23 @@ services:
     volumes:
       - ./flask-project:/flask-project
     ports:
-      - 8000:8000
+      - 5000:5000
     depends_on:
       - mongodb
     stdin_open: true
     tty: true
+    networks:
+      - default
   front:
     build:
      context: ./vue-project
      dockerfile: Dockerfile-front
     ports:
-      - 8080:8080
+      - 80:80
     volumes:
       - ./vue-project:/vue-project
+    networks:
+      - default
   mongodb:
     image: mongo
     restart: always
@@ -32,4 +36,18 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: 123456
       MONGO_INITDB_DATABASE: test
     volumes:
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ./docker-entrypoint-initdb.d/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=kani
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=123456
+      - ME_CONFIG_BASICAUTH_USERNAME=kani
+      - ME_CONFIG_BASICAUTH_PASSWORD=123456
+    depends_on:
+      - mongodb
