@@ -2,13 +2,14 @@ name: kani-github-actions
 on:
   push:
     branchs: [ main ]
+      paths-ignore:
+        - './vue-project/**'
   pull_request:
     branches: [ main ]
 jobs:
   run:
     runs-on: ubuntu-latest
-    env:
-      working-directory: ./flask-vue/flask-project
+    working-directory: ./flask-project
     steps:
     - name: Checkout source code
       uses: actions/checkout@v2
