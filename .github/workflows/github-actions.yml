@@ -1,0 +1,27 @@
+name: kani-github-actions
+on:
+  push:
+    branchs: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  env:
+    working-directory: ./flask-project
+  run:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/cehckout@v2
+    - name: Set up python 3.8.13
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8.13
+    - name: Install dependecies
+      run: |
+        pip install -U pip \
+        && apt-get update \
+        && apt install -y curl netcat \
+        && curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+        && poetry install
+    - name: Test with pytest
+      run: |
+        poetry run pytest
