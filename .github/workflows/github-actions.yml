@@ -49,5 +49,5 @@ jobs:
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
     - run: |
-        docker-compose build -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/aspcoresample:${{ github.sha }}
-        docker-compose push ${{ secrets.REGISTRY_LOGIN_SERVER }}/aspcoresample:${{ github.sha }}
+        docker-compose build -t kania.azurecr.io/vue-flask
+        docker-compose push kania.azurecr.io/vue-flask
