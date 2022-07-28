@@ -9,7 +9,6 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
-    working-directory: ./flask-project
     steps:
     - name: Checkout source code
       uses: actions/checkout@v2
@@ -25,10 +24,12 @@ jobs:
         sudo curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
         source $HOME/.poetry/env
     - name: Install python dependencies
+      working-directory: ./flask-project
       run: |
         source $HOME/.poetry/env
         poetry install
     - name: Test with pytest
+      working-directory: ./flask-project
       run: |
         source $HOME/.poetry/env
           sudo poetry run pytest
