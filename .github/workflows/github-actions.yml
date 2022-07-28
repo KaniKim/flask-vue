@@ -47,7 +47,7 @@ jobs:
       - name: Build
         run: docker-compose build
       - name: Push
-        run: docker push kkh5428/aimmo
+        run: docker-compose push
 
   azure:
     needs: docker
