@@ -16,16 +16,13 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.8.13
-    - name: Give chmod
-      run: |
-        sudo chown -R ubuntu:ubuntu ubuntu
     - name: Install dependecies
       run: |
         pip install -U pip 
-        apt-get update 
-        apt install -y curl netcat
-        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
-        poetry install
+        sudo apt-get update 
+        sudo apt install -y curl netcat
+        sudo curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+        sudo poetry install
     - name: Test with pytest
       run: |
-        poetry run pytest
+        sudo poetry run pytest
