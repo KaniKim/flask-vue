@@ -5,37 +5,7 @@ on:
   pull_request:
     branches: [ main ]
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Install Azure cli
-      run: |
-        sudo apt-get install ca-certificates curl apt-transport-https lsb-release gnupg
-        curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
-        AZ_REPO=$(lsb_release -cs)
-        echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | sudo tee /etc/apt/sources.list.d/azure-cli.list
-        sudo apt-get update
-        sudo apt-get install azure-cli
-    - uses: azure/login@v1
-      with:
-          creds: ${{ secrets.AZURE_KANI }}
-    - name: Upload to blob storage
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-            az storage blob upload-batch --account-name <STORAGE_ACCOUNT_NAME> --auth-mode key -d '$web' -s .
-    - name: Purge CDN endpoint
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-           az cdn endpoint purge --content-paths  "/*" --profile-name "CDN_PROFILE_NAME" --name "CDN_ENDPOINT" --resource-group "RESOURCE_GROUP"
-    - name: logout
-      run: |
-            az logout
-      if: always()
   run:
-    needs: build
     runs-on: ubuntu-latest
     steps:
     - name: Checkout source code
@@ -61,3 +31,36 @@ jobs:
       run: |
         source $HOME/.poetry/env
         poetry run pytest
+  docker:
+    needs: run
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Build and Release
+        env:
+          REPO: kkh5428
+          LAYER_NAME: aimmo
+        run: |
+          docker build -t $LAYER_NAME  .
+          docker tag $LAYER_NAME:latest $REPO/$LAYER_NAME:latest
+          docker push $REPO/$LAYER_NAME:latest
+  azure:
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+    - name: remote SSH
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          docker rm -f $(docker ps -aq -f name=kkh5428)
+          docker rmi $(docker images | grep 'kkh5428/aimmo' | awk '{print $3}')
+          docker pull kkh5428/aimmo
+          docker run --name aimmo -p 5000:80 --restart=always -d kkh5428/aimmo
