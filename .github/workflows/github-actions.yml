@@ -50,4 +50,4 @@ jobs:
         password: ${{ secrets.REGISTRY_PASSWORD }}
     - run: |
         docker-compose build
-        docker-compose push "kania.azurecr.io/vue-flask"
+        docker-compose push flask-vue_backend:latest
