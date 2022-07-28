@@ -45,7 +45,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
       - name: Build
-        run: docker-compose --build
+        run: docker-compose build
       - name: Push
         run: docker push kkh5428/aimmo
 
