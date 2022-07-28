@@ -5,6 +5,7 @@ services:
     build:
       context: ./flask-project
       dockerfile: Dockerfile-back
+    image: kania.azurecr.io/backend
     volumes:
       - ./flask-project:/flask-project
     ports:
@@ -17,8 +18,9 @@ services:
       - default
   front:
     build:
-     context: ./vue-project
-     dockerfile: Dockerfile-front
+      context: ./vue-project
+      dockerfile: Dockerfile-front
+    image: kania.azurecr.io/front
     ports:
       - 80:80
     volumes:
