@@ -5,10 +5,10 @@ on:
   pull_request:
     branches: [ main ]
 jobs:
-  env:
-    working-directory: ./flask-project
   run:
     runs-on: ubuntu-latest
+    env:
+      working-directory: ./flask-project
     steps:
     - name: Checkout source code
       uses: actions/cehckout@v2
