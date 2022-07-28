@@ -16,6 +16,9 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.8.13
+    - name: Give chmod
+      run: |
+        sudo chown -R ubuntu:ubuntu ubuntu
     - name: Install dependecies
       run: |
         pip install -U pip 
