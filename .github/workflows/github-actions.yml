@@ -10,7 +10,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     working-directory: ./flask-project
-  steps:
+    steps:
     - name: Checkout source code
       uses: actions/checkout@v2
     - name: Set up python 3.8.13
@@ -31,4 +31,4 @@ jobs:
     - name: Test with pytest
       run: |
         source $HOME/.poetry/env
-        sudo poetry run pytest
+          sudo poetry run pytest
