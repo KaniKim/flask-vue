@@ -47,7 +47,7 @@ jobs:
       - name: Build
         run: docker-compose build
       - name: Push
-        run: docker-compose push
+        run: docker-compose push kkh5428/aimmo:latest
 
   azure:
     needs: docker
@@ -68,5 +68,5 @@ jobs:
           sudo apt-get install docker-ce
           docker rm -f $(docker ps -aq -f name=kkh5428)
           docker rmi $(docker images | grep 'kkh5428/aimmo' | awk '{print $3}')
-          docker pull kkh5428/aimmo
-          docker-compose up -d --name aimmo 
+          docker pull kkh5428/aimmo:latest
+          docker-compose up -d --build 
