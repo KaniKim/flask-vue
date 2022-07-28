@@ -2,8 +2,8 @@ name: kani-github-actions
 on:
   push:
     branchs: [ main ]
-      paths-ignore:
-        - './vue-project/**'
+    paths-ignore:
+      - './vue-project/**'
   pull_request:
     branches: [ main ]
 jobs:
