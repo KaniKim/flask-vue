@@ -32,4 +32,4 @@ jobs:
       working-directory: ./flask-project
       run: |
         source $HOME/.poetry/env
-          sudo poetry run pytest
+        poetry run pytest
