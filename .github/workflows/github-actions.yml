@@ -38,7 +38,7 @@ jobs:
     - name: Login Azure
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_KANI }}
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Build Push ACR
       uses: azure/docker-login@v1
