@@ -25,14 +25,7 @@ def create_app(test=False):
         }
     )
     if not test:
-        connect(
-            "test",
-            username="kani",
-            password="123456",
-            host="mongodb://mongodb:27017",
-            port=27017,
-            connect=False,
-        )
+        connect(mongodb://kani-mongo:O3u8L1CLE02FGldlnMLm0YQLsTvfIVRqoY4Lw7LF9bbQ4RjZq3DZDUGTnwfzbkpfecgqIXFqpwG1niL1OnkqbA==@kani-mongo.mongo.cosmos.azure.com:10255/?ssl=true&retrywrites=false&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@kani-mongo)
     else:
         connect(host="mongomock://localhost")
     CORS(
