@@ -19,7 +19,7 @@ jobs:
         sudo apt-get install azure-cli
     - uses: azure/login@v1
       with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          creds: ${{ secrets.AZURE_KANI }}
     - name: Upload to blob storage
       uses: azure/CLI@v1
       with:
