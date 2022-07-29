@@ -10,7 +10,9 @@ FROM nginx:alpine
 
 COPY default.conf /etc/nginx/nginx.conf
 
-## Remove default nginx index page
+RUN rm -rf /etc/nginx/conf.d/default.conf
+COPY --from=builder ./vue-project/default.conf /etc/nginx/conf.d/default.conf
+
 RUN rm -rf /usr/share/nginx/html/*
 
 # Copy from the stahg 1
