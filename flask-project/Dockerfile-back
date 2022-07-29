@@ -20,5 +20,5 @@ RUN poetry install
 
 ENV SSL_DISABLE=1
 
-CMD ["poetry", "run", "uwsgi", "./uwsgi.ini", "--http", ":80"]
+CMD ["poetry", "run", "uwsgi", "--ini", "./uwsgi.ini"]
 

@@ -24,10 +24,8 @@ def create_app(test=False):
             "APISPEC_SWAGGER_URL": "/swagger/",
         }
     )
-    if not test:
-        connect("mongodb://kani-mongo:O3u8L1CLE02FGldlnMLm0YQLsTvfIVRqoY4Lw7LF9bbQ4RjZq3DZDUGTnwfzbkpfecgqIXFqpwG1niL1OnkqbA==@kani-mongo.mongo.cosmos.azure.com:10255/?ssl=true&retrywrites=false&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@kani-mongo")
-    else:
-        connect(host="mongomock://localhost")
+
+    connect(host="mongomock://localhost")
     CORS(
         app,
         intercept_exceptions=False,
@@ -55,5 +53,7 @@ def create_app(test=False):
     return app
 
 
+application = create_app()
+
 if __name__ == "__main__":
-    create_app().run()
+    application.run(host="0.0.0.0")
