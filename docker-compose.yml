@@ -9,7 +9,7 @@ services:
       - 80:80
     volumes:
       - ./nginx/default.conf:/etc/nginx/nginx.conf
-    container_name: proxy
+    container_name: mynginx
     depends_on:
       - backend
       - front
