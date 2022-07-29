@@ -1,6 +1,18 @@
 version: '3.8'
 
 services:
+  nginx:
+    build:
+      dockerfile: Dockerfile-nginx
+    image: kania.azurecr.io/mynginx
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/nginx.conf
+    container_name: proxy
+    depends_on:
+      - backend
+      - front
   backend:
     build:
       context: ./flask-project

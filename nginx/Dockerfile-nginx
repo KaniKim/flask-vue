@@ -1,0 +1,4 @@
+FROM nginx:1.21.5-alpine
+COPY appnginx.html  /home/site/wwwroot/index.html
+COPY ./nginx.conf /etc/nginx/nginx.conf
+RUN  .
