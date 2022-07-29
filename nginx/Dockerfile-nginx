@@ -1,3 +1,3 @@
 FROM nginx:1.21.5-alpine
 COPY ./default.conf /etc/nginx/nginx.conf
-RUN  .
+CMD ["nginx", "-g", "daemon off;"]
