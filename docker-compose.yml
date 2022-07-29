@@ -3,7 +3,8 @@ version: '3.8'
 services:
   nginx:
     build:
-      dockerfile: ./nginx/Dockerfile-nginx
+      context: ./nginx
+      dockerfile: Dockerfile-nginx
     image: kania.azurecr.io/mynginx
     ports:
       - 80:80
