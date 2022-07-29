@@ -14,6 +14,8 @@ services:
     depends_on:
       - backend
       - front
+    links:
+      - backend
   backend:
     build:
       context: ./flask-project
@@ -29,8 +31,6 @@ services:
     tty: true
     networks:
       - default
-    links:
-      - backend
   front:
     build:
       context: ./vue-project
