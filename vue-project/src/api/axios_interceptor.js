@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const Axios = axios.create({
-  baseURL: 'https://kania.azurewebsites.net:5000/',
+  baseURL: '/api/',
   timeout: 1000,
 });
 
