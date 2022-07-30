@@ -1,3 +1,5 @@
+from os import environ
+
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from flask import Flask
@@ -26,7 +28,7 @@ def create_app(test=False):
         'APISPEC_SWAGGER_URL': '/swagger/',
     })
     if not test:
-        connect("test", username="kani", password="123456", host="mongodb://mongodb:27017", port=27017, connect=False)
+        connect(environ.get("kani_mongo"))
     else:
         connect(host="mongomock://localhost")
     CORS(app,
