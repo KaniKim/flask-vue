@@ -45,10 +45,10 @@ def create_app(test=False):
          )
     jwt = JWTManager(app)
 
-    UserView.register(app, route_base="/user", trailing_slash=False)
-    ColumnView.register(app, route_base="/column", trailing_slash=False)
-    BoardView.register(app, route_base='/board', trailing_slash=False)
-    CommentView.register(app, route_base='/comment', trailing_slash=False)
+    UserView.register(app, route_base="/api/user", trailing_slash=False)
+    ColumnView.register(app, route_base="/api/column", trailing_slash=False)
+    BoardView.register(app, route_base='/api/board', trailing_slash=False)
+    CommentView.register(app, route_base='/api/comment', trailing_slash=False)
 
     register_api(app)
 
