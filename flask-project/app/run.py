@@ -28,7 +28,11 @@ def create_app(test=False):
         'APISPEC_SWAGGER_URL': '/swagger/',
     })
     if not test:
-        connect(environ.get("kani_mongo"))
+        connect(username=str(environ.get("MONGO_USERNAME")),
+                password=str(environ.get("MONGO_PASSWORD")),
+                host=str(environ.get("MONGO_HOST")),
+                port=str(environ.get("MONGO_PORT")),
+                db=str(environ.get("MONGO_DB")))
     else:
         connect(host="mongomock://localhost")
     CORS(app,
